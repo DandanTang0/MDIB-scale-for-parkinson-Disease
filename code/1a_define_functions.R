@@ -1,47 +1,43 @@
 # ---------------------------------------------------------------------------- #
-# Define Functions
-# Original code by: Jeremy W. Eberle
-# Minor modifications by: Dandan Tang
-# ---------------------------------------------------------------------------- #
-
-# ---------------------------------------------------------------------------- #
 # Define version_control() ----
 # ---------------------------------------------------------------------------- #
 
-# Define function to check R version, load groundhog package, and return groundhog_day
+# Define a helper function to record the R version used for the reproducibility
+# snapshot, load the groundhog package, and set the package-version date used
+# throughout the analysis scripts.
 
 version_control <- function() {
-  # Ensure you are using the same version of R used at the time the script was 
-  # written. To install a previous version, go to 
-  # https://cran.r-project.org/bin/windows/base/old/
   
-  script_R_version <- "R version 4.5.1 (2025-06-13)"
+  # Record the R version used when the PD analyses were finalized. The script
+  # issues a warning, rather than stopping, if a different R version is used.
+  # This allows the scripts to run on other systems while making version
+  # differences explicit.
+  
+  analysis_R_version <- "R version 4.5.1 (2025-06-13)"
   current_R_version <- R.Version()$version.string
   
-  if(current_R_version != script_R_version) {
-    warning(paste0("This script is based on ", script_R_version,
+  if (current_R_version != analysis_R_version) {
+    warning(paste0("These analyses were finalized using ", analysis_R_version,
                    ". You are running ", current_R_version, "."))
   }
   
-  # Load packages using "groundhog", which installs and loads the most recent
-  # versions of packages available on the specified date ("groundhog_day"). This 
-  # is important for reproducibility so that everyone running the script is using
-  # the same versions of packages used at the time the script was written.
+  # Load packages using groundhog. The groundhog_day specifies the package
+  # versions available on that date, which helps ensure that everyone running the
+  # analysis scripts uses the same package versions.
   
-  # Note that packages may take longer to load the first time you load them with
-  # "groundhog.library". This is because you may not have the correct versions of 
-  # the packages installed based on the "groundhog_day". After "groundhog.library"
-  # automatically installs the correct versions alongside other versions you may 
-  # have installed, it will load the packages more quickly.
+  # Packages may take longer to load the first time they are called with
+  # groundhog.library(), because groundhog may need to install the specified
+  # package versions alongside any other versions already installed.
   
-  # If in the process of loading packages with "groundhog.library" for the first 
-  # time the console states that you first need to install "Rtools", follow steps 
-  # here (https://cran.r-project.org/bin/windows/Rtools/) for installing "Rtools" 
-  # and putting "Rtools" on the PATH. Then try loading the packages again.
+  # On Windows, if groundhog needs to install packages from source and the console
+  # asks for Rtools, install Rtools from:
+  # https://cran.r-project.org/bin/windows/Rtools/
+  # Then rerun the script.
   
   library(groundhog)
-  meta.groundhog("2025-09-01")
+  
   groundhog_day <- "2025-09-01"
+  meta.groundhog(groundhog_day)
   
   return(groundhog_day)
 }
