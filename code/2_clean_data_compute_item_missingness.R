@@ -2,8 +2,8 @@
 # Store working directory, load helper functions, and set package-version date ----
 # ---------------------------------------------------------------------------- #
 
-# Store the project root directory. This object can be used later if the script
-# needs to return to the original working directory after writing outputs.
+# Before running this script, restart R and set the working directory to the
+# project root folder.
 
 wd_dir <- getwd()
 
