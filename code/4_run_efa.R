@@ -1,957 +1,750 @@
 # ---------------------------------------------------------------------------- #
-# Run Exploratory Factor Analysis
-# Original code by: Jeremy W. Eberle
-# Minor modifications by: Dandan Tang
+# Run Exploratory Factor Analysis for the PD paper
 # ---------------------------------------------------------------------------- #
 
 # ---------------------------------------------------------------------------- #
 # Notes ----
 # ---------------------------------------------------------------------------- #
 
-# Before running script, restart R (CTRL+SHIFT+F10 on Windows) and set working 
-# directory to parent folder
+# Before running this script:
+# 1. Restart R.
+# 2. Set the working directory to the project parent folder.
+# 3. Make sure the PD data preparation scripts export PD-labeled objects.
+#
+# This script follows the PD preregistered EFA plan:
+# - Inspect item distributions first.
+# - If items are severely skewed, treat items as categorical.
+# - Use parallel analysis directly, without scree plots.
+# - For categorical items, use polychoric correlations in parallel analyses.
+# - Use WLSMV estimation for EFAs.
+# - Use oblimin rotation as the primary solution.
+# - Use geomin and promax rotations as sensitivity analyses.
+#
+# This script intentionally removes:
+# - scree plot analyses,
+# - parallel analyses based on Pearson correlations,
+# - MLM EFA models,
+# - HD-specific comments and decision logic.
+#
+# Result-informed notes from the current PD run:
+# - Visual inspection showed substantial skewness, especially for the 12 negative
+#   items, which showed pronounced floor effects and sparse upper-category
+#   responses. This supported treating the items as ordered categorical indicators.
+# - For all 36 items, polychoric parallel analysis suggested an upper bound of
+#   three components, so 2-, 3-, and 4-factor WLSMV EFA solutions were examined.
+# - The 36-item EFAs did not yield a clear, stable, theoretically interpretable
+#   structure beyond a broad benign-versus-negative distinction. Therefore, the
+#   analyses proceeded to the 12 theorized negative items, consistent with the
+#   analysis plan and the HD workflow.
+# - For the 12 negative items, polychoric parallel analysis suggested a one-
+#   component upper bound. Following the preregistered +/- 1 approach, 1- and
+#   2-factor WLSMV EFA solutions were examined.
+# - The 12-item 1-factor solution supported a broad negative bias factor but had
+#   poor model fit and a very weak item, mdib_neg_int_remember_1b.
+# - The 12-item 2-factor solution was more consistent with the theorized
+#   internal/external distinction, but three item-level concerns remained:
+#     1. mdib_neg_int_remember_1b did not load saliently on either factor.
+#     2. mdib_neg_ext_server_2a loaded with the internal rather than external items.
+#     3. mdib_neg_int_email_6b showed a mild cross-loading in some rotations.
+# - Across the item-removal sequences, mdib_neg_int_remember_1b and
+#   mdib_neg_ext_server_2a were the clearest problematic items. The evidence for
+#   removing mdib_neg_int_email_6b was weaker because it retained a salient
+#   primary loading on the internal factor and was cleaner in promax sensitivity
+#   analyses.
+# - A 10-item solution that removes mdib_neg_int_remember_1b and
+#   mdib_neg_ext_server_2a but retains mdib_neg_int_email_6b is therefore a
+#   balanced candidate solution. A stricter 9-item solution that also removes
+#   mdib_neg_int_email_6b gives the cleanest loading pattern, but leaves only
+#   three internal items and does not clearly improve model fit relative to the
+#   10-item solution.
 
 # ---------------------------------------------------------------------------- #
-# Store working directory, check correct R version, load packages ----
+# Store working directory, check R version, load packages ----
 # ---------------------------------------------------------------------------- #
-
-# Store working directory
 
 wd_dir <- getwd()
 
-# Load custom functions
-
-source("~/code/1a_define_functions.R")
-
-# Check correct R version, load groundhog package, and specify groundhog_day
+source("./1a_define_functions.R")
 
 groundhog_day <- version_control()
-
-# Load packages
 
 pkgs <- c("psych", "lavaan")
 groundhog.library(pkgs, groundhog_day)
 
-# Set seed
-
 set.seed(1234)
 
 # ---------------------------------------------------------------------------- #
-# Define functions used in script ----
+# Define helper functions ----
 # ---------------------------------------------------------------------------- #
 
-# Define function to export basic EFA results and details to TXT and loadings to CSV
+# Create directory if it does not already exist.
+make_dir <- function(path) {
+  dir.create(path, recursive = TRUE, showWarnings = FALSE)
+}
 
+# Export lavaan EFA summaries, detailed output, loadings, and the fitted object.
+# The loadings file is printed output rather than a strictly rectangular CSV,
+# because lavaan::efa stores loadings in an object that is most readable in print form.
 export_efa_res <- function(fit, path, filename_stem) {
-  sink(paste0(path, paste0(filename_stem, ".txt")))
+  make_dir(path)
+
+  sink(file.path(path, paste0(filename_stem, ".txt")))
   print(summary(fit))
   sink()
-  
-  sink(paste0(path, paste0(filename_stem, "_detail.txt")))
+
+  sink(file.path(path, paste0(filename_stem, "_detail.txt")))
   print(summary(fit, se = TRUE, zstat = TRUE, pvalue = TRUE))
   sink()
-  
-  sink(paste0(path, paste0(filename_stem, ".csv")))
+
+  sink(file.path(path, paste0(filename_stem, "_loadings.csv")))
   print(fit$loadings)
   sink()
+
+  saveRDS(fit, file.path(path, paste0(filename_stem, ".rds")))
+}
+
+# Export ordinal item distributions as counts and percentages.
+# These tables document response-category sparsity and provide support for
+# treating the MDIB items as ordered categorical indicators.
+export_item_distributions <- function(df, path, filename_stem) {
+  make_dir(path)
+
+  dist_list <- lapply(names(df), function(item) {
+    tab <- table(df[[item]], useNA = "ifany")
+    data.frame(
+      item = item,
+      response = names(tab),
+      n = as.integer(tab),
+      percent = round(100 * as.integer(tab) / nrow(df), 2),
+      stringsAsFactors = FALSE
+    )
+  })
+
+  dist_df <- do.call(rbind, dist_list)
+  write.csv(
+    dist_df,
+    file.path(path, paste0(filename_stem, "_item_distributions.csv")),
+    row.names = FALSE
+  )
+
+  invisible(dist_df)
+}
+
+# Plot item histograms for visual inspection.
+# The x-axis is fixed to the 0 to 4 MDIB response scale.
+plot_item_hists <- function(df, path, filename_stem, n_per_page = 6) {
+  make_dir(path)
+
+  pdf(file.path(path, paste0(filename_stem, "_hists.pdf")), height = 6, width = 6)
+
+  for (start_col in seq(1, ncol(df), by = n_per_page)) {
+    end_col <- min(start_col + n_per_page - 1, ncol(df))
+    cols <- start_col:end_col
+
+    par(mfrow = c(3, 2))
+    for (i in cols) {
+      hist(
+        df[[i]],
+        main = names(df)[i],
+        xlab = "",
+        breaks = seq(-0.5, 4.5, by = 1),
+        xaxt = "n"
+      )
+      axis(1, at = 0:4)
+    }
+  }
+
+  dev.off()
+}
+
+# Convert MDIB items to ordered factors for categorical analyses.
+# Missing response categories are dropped separately for each item. Observed
+# responses are not collapsed, recoded, or otherwise altered.
+make_ordered_mdib <- function(df) {
+  df_ord <- as.data.frame(lapply(df, function(x) {
+    factor(x, levels = sort(unique(x[!is.na(x)])), ordered = TRUE)
+  }))
+
+  stopifnot(ncol(df_ord) == ncol(df))
+  stopifnot(all(names(df_ord) == names(df)))
+
+  df_ord
+}
+
+# Run parallel analysis based on principal components and polychoric correlations.
+# Important: psych::fa.parallel prints ncomp, but for this project we do not base
+# the decision on the printed ncomp value. Instead, following prior guidance for
+# the HD analyses, we explicitly count how many observed principal-component
+# eigenvalues exceed the mean simulated or resampled eigenvalues.
+#
+# Expected warnings:
+# - "The items do not have an equal number of response alternatives" can occur
+#   because severely skewed items have sparse or unobserved response categories.
+# - "Matrix was not positive definite, smoothing was done" can occur for the
+#   36-item polychoric matrix, likely because the number of items is large relative
+#   to the usable sample size and several response categories are sparse.
+run_pa_poly <- function(df, path, filename_stem, fm = "minres", n_iter = 100) {
+  make_dir(path)
+
+  pdf(file.path(path, paste0(filename_stem, "_pa_poly_", fm, ".pdf")),
+      height = 6, width = 6)
+
+  result <- psych::fa.parallel(
+    df,
+    fa = "pc",
+    fm = fm,
+    n.iter = n_iter,
+    correct = 0,
+    cor = "poly"
+  )
+
+  dev.off()
+
+  n_random_mean <- sum(result$pc.values > result$pc.sim)
+  n_resample_mean <- sum(result$pc.values > result$pc.simr)
+
+  summary_df <- data.frame(
+    filename_stem = filename_stem,
+    fm = fm,
+    n_iter = n_iter,
+    threshold = c("random_data_mean", "resampled_data_mean"),
+    n_components = c(n_random_mean, n_resample_mean),
+    stringsAsFactors = FALSE
+  )
+
+  write.csv(
+    summary_df,
+    file.path(path, paste0(filename_stem, "_pa_poly_", fm, "_summary.csv")),
+    row.names = FALSE
+  )
+
+  saveRDS(
+    result,
+    file.path(path, paste0(filename_stem, "_pa_poly_", fm, ".rds"))
+  )
+
+  list(result = result, summary = summary_df)
+}
+
+# Summarize two polychoric parallel-analysis runs and define candidate factor counts.
+# If the random-data and resampled-data thresholds differ, the larger number is
+# treated as the upper bound. Candidate EFA solutions then follow the preregistered
+# +/- 1 approach.
+summarize_pa_decision <- function(pa_minres, pa_ml, path, filename_stem) {
+  make_dir(path)
+
+  pa_summary <- rbind(pa_minres$summary, pa_ml$summary)
+
+  upper_bound <- max(pa_summary$n_components, na.rm = TRUE)
+  candidate_nfactors <- seq(max(1, upper_bound - 1), upper_bound + 1)
+
+  decision_df <- data.frame(
+    filename_stem = filename_stem,
+    upper_bound = upper_bound,
+    candidate_nfactors = paste(candidate_nfactors, collapse = ", "),
+    stringsAsFactors = FALSE
+  )
+
+  write.csv(
+    pa_summary,
+    file.path(path, paste0(filename_stem, "_pa_poly_combined_summary.csv")),
+    row.names = FALSE
+  )
+
+  write.csv(
+    decision_df,
+    file.path(path, paste0(filename_stem, "_pa_decision.csv")),
+    row.names = FALSE
+  )
+
+  list(
+    pa_summary = pa_summary,
+    decision = decision_df,
+    candidate_nfactors = candidate_nfactors
+  )
+}
+
+# Run WLSMV EFAs with primary and sensitivity rotations.
+# Oblimin is the primary rotation. Geomin and promax are used to evaluate whether
+# the substantive loading pattern is robust to rotation choice.
+run_wlsmv_efas <- function(df_ord, nfactors, path, filename_stem) {
+  make_dir(path)
+
+  rotations <- c("oblimin", "geomin", "promax")
+  fits <- list()
+
+  for (rotation in rotations) {
+    set.seed(1234)
+
+    fit <- lavaan::efa(
+      data = df_ord,
+      nfactors = nfactors,
+      rotation = rotation,
+      estimator = "WLSMV",
+      ordered = names(df_ord),
+      check.vcov = FALSE
+    )
+
+    fits[[rotation]] <- fit
+
+    export_efa_res(
+      fit = fit,
+      path = path,
+      filename_stem = paste0(filename_stem, "_", rotation, "_wlsmv")
+    )
+  }
+
+  fits
+}
+
+# Run one item-removal sequence.
+# Each step removes one additional item, reruns polychoric parallel analysis, and
+# reruns WLSMV EFAs. These results are used to compare strategically chosen
+# removal paths, not to exhaustively search every possible item subset.
+run_removal_sequence <- function(df, sequence_name, removal_order, base_path) {
+  sequence_path <- file.path(base_path, sequence_name)
+  make_dir(sequence_path)
+
+  current_df <- df
+  sequence_log <- data.frame(
+    step = integer(),
+    removed_item = character(),
+    retained_n_items = integer(),
+    retained_items = character(),
+    stringsAsFactors = FALSE
+  )
+
+  for (step in seq_along(removal_order)) {
+    item_to_remove <- removal_order[step]
+
+    if (!item_to_remove %in% names(current_df)) {
+      stop(paste0("Item not found in current data: ", item_to_remove))
+    }
+
+    current_df <- current_df[, names(current_df) != item_to_remove, drop = FALSE]
+
+    step_name <- paste0("step_", sprintf("%02d", step), "_minus_", item_to_remove)
+    step_path <- file.path(sequence_path, step_name)
+
+    # Parallel analysis is rerun after each item removal because removing one
+    # item can change the observed and simulated eigenvalue comparison.
+    pa_minres <- run_pa_poly(
+      current_df,
+      path = file.path(step_path, "parallel_analysis"),
+      filename_stem = step_name,
+      fm = "minres",
+      n_iter = 100
+    )
+
+    pa_ml <- run_pa_poly(
+      current_df,
+      path = file.path(step_path, "parallel_analysis"),
+      filename_stem = step_name,
+      fm = "ml",
+      n_iter = 100
+    )
+
+    pa_decision <- summarize_pa_decision(
+      pa_minres,
+      pa_ml,
+      path = file.path(step_path, "parallel_analysis"),
+      filename_stem = step_name
+    )
+
+    df_ord <- make_ordered_mdib(current_df)
+
+    run_wlsmv_efas(
+      df_ord = df_ord,
+      nfactors = pa_decision$candidate_nfactors,
+      path = file.path(step_path, "efa"),
+      filename_stem = step_name
+    )
+
+    sequence_log <- rbind(
+      sequence_log,
+      data.frame(
+        step = step,
+        removed_item = item_to_remove,
+        retained_n_items = ncol(current_df),
+        retained_items = paste(names(current_df), collapse = ", "),
+        stringsAsFactors = FALSE
+      )
+    )
+
+    save(
+      current_df,
+      file = file.path(step_path, paste0(step_name, "_numeric.RData"))
+    )
+
+    save(
+      df_ord,
+      file = file.path(step_path, paste0(step_name, "_ordered.RData"))
+    )
+  }
+
+  write.csv(
+    sequence_log,
+    file.path(sequence_path, paste0(sequence_name, "_sequence_log.csv")),
+    row.names = FALSE
+  )
+
+  invisible(sequence_log)
 }
 
 # ---------------------------------------------------------------------------- #
-# Import data ----
+# Import PD data ----
 # ---------------------------------------------------------------------------- #
 
-load("~/data/further_clean/mdib_hd_dat2.RData")
-load("~/data/helper/mdib_dat_items.RData")
-load("~/data/helper/mdib_item_map.RData")
+# The data preparation scripts should export a PD-labeled object. If this object is
+# not available, revise the data preparation scripts first rather than continuing
+# to use HD-labeled object names for the PD analysis.
+load("./data/further_clean/mdib_pd_dat.RData")
+load("./data/helper/mdib_dat_items.RData")
+load("./data/helper/mdib_item_map.RData")
+
+stopifnot(exists("mdib_pd_dat"))
+stopifnot(exists("mdib_dat_items"))
+stopifnot(exists("mdib_item_map"))
 
 # ---------------------------------------------------------------------------- #
-# Prepare data ----
+# Prepare baseline MDIB item data ----
 # ---------------------------------------------------------------------------- #
-
-# Restrict to baseline and MDIB columns
 
 mdib_items <- c(mdib_dat_items$mdib_ben, mdib_dat_items$mdib_neg)
 
-mdib_bl <- mdib_hd_dat2[mdib_hd_dat2$redcap_event_name == "baseline_arm_1", mdib_items]
+mdib_bl <- mdib_pd_dat[
+  mdib_pd_dat$redcap_event_name == "baseline_arm_1",
+  mdib_items
+]
 
-# Order columns by meaning and then domain
-
+# Order columns by meaning and then domain, as in the HD paper.
 mdib_item_map <- mdib_item_map[order(mdib_item_map$meaning, mdib_item_map$domain), ]
 
-mdib_bl <- mdib_bl[match(mdib_item_map$items_rename, names(mdib_bl))]
+mdib_bl <- mdib_bl[
+  match(mdib_item_map$items_rename, names(mdib_bl))
+]
+
+stopifnot(ncol(mdib_bl) == 36)
+stopifnot(all(names(mdib_bl) == mdib_item_map$items_rename))
 
 # ---------------------------------------------------------------------------- #
-# Inspect item distributions ----
+# Define output paths ----
 # ---------------------------------------------------------------------------- #
 
-# Define function to plot histograms for six items at a time
+efa_path <- "./results/efa_pd_preregistered/"
+make_dir(efa_path)
 
-plot_item_hists <- function(df, cols) {
-  par(mfrow = c(3, 2))
-  
-  for (i in cols) {
-    col_name <- names(df[i])
-    hist(df[, i], main = col_name, xlab = "")
-  }
+# ---------------------------------------------------------------------------- #
+# Step 1: Inspect item distributions ----
+# ---------------------------------------------------------------------------- #
+
+dist_path <- file.path(efa_path, "item_distributions")
+make_dir(dist_path)
+
+export_item_distributions(
+  df = mdib_bl,
+  path = dist_path,
+  filename_stem = "mdib_bl_all_36"
+)
+
+plot_item_hists(
+  df = mdib_bl,
+  path = dist_path,
+  filename_stem = "mdib_bl_all_36"
+)
+
+# Result note:
+# Visual inspection of the 36 item distributions indicated substantial skewness.
+# The negative items showed especially pronounced floor effects, with most
+# responses concentrated in the lower response categories and sparse responses in
+# the upper categories. Therefore, consistent with the preregistered analysis
+# plan, all MDIB items are treated as ordered categorical indicators in the
+# parallel analyses and EFAs below.
+
+# ---------------------------------------------------------------------------- #
+# Step 2: Parallel analysis for all 36 MDIB items ----
+# ---------------------------------------------------------------------------- #
+
+all_items_path <- file.path(efa_path, "all_36_items")
+all_pa_path <- file.path(all_items_path, "parallel_analysis")
+
+pa_all_minres <- run_pa_poly(
+  df = mdib_bl,
+  path = all_pa_path,
+  filename_stem = "all_36_items",
+  fm = "minres",
+  n_iter = 100
+)
+
+pa_all_ml <- run_pa_poly(
+  df = mdib_bl,
+  path = all_pa_path,
+  filename_stem = "all_36_items",
+  fm = "ml",
+  n_iter = 100
+)
+
+pa_all_decision <- summarize_pa_decision(
+  pa_minres = pa_all_minres,
+  pa_ml = pa_all_ml,
+  path = all_pa_path,
+  filename_stem = "all_36_items"
+)
+
+# Result note:
+# In the current PD run, the minres and ML polychoric parallel analyses both
+# supported an upper bound of three components for the 36 MDIB items. Following
+# the preregistered +/- 1 approach, the candidate WLSMV EFA solutions are
+# therefore 2, 3, and 4 factors.
+#
+# Warning note:
+# The 36-item polychoric parallel analyses may produce warnings that items do not
+# have the same number of observed response alternatives and that the polychoric
+# correlation matrix is not positive definite. These warnings are consistent with
+# sparse response categories and the complexity of estimating a 36-item
+# polychoric matrix in the current usable sample.
+
+# ---------------------------------------------------------------------------- #
+# Step 3: WLSMV EFAs for all 36 MDIB items ----
+# ---------------------------------------------------------------------------- #
+
+mdib_bl_ord <- make_ordered_mdib(mdib_bl)
+
+fits_all_36 <- run_wlsmv_efas(
+  df_ord = mdib_bl_ord,
+  nfactors = pa_all_decision$candidate_nfactors,
+  path = file.path(all_items_path, "efa"),
+  filename_stem = "all_36_items"
+)
+
+# Result note:
+# In the current PD run, model fit improved as the number of factors increased
+# across the 2-, 3-, and 4-factor 36-item solutions. However, the loading patterns
+# did not yield a clear, stable, theoretically interpretable structure across all
+# 36 items. The 2-factor solution primarily separated benign and negative items
+# rather than internal and external threat items. The 3- and 4-factor solutions
+# were more complex and less stable across rotations. For this reason, the
+# 36-item analyses are treated as preliminary full-item diagnostics, and the
+# primary item-retention work proceeds with the 12 theorized negative items.
+
+# ---------------------------------------------------------------------------- #
+# Step 4: Restrict to the 12 theorized negative bias items ----
+# ---------------------------------------------------------------------------- #
+
+mdib_bl_neg_12 <- mdib_bl[, grepl("^mdib_neg", names(mdib_bl)), drop = FALSE]
+
+stopifnot(ncol(mdib_bl_neg_12) == 12)
+
+neg_12_path <- file.path(efa_path, "negative_12_items")
+neg_12_dist_path <- file.path(neg_12_path, "item_distributions")
+
+export_item_distributions(
+  df = mdib_bl_neg_12,
+  path = neg_12_dist_path,
+  filename_stem = "negative_12_items"
+)
+
+plot_item_hists(
+  df = mdib_bl_neg_12,
+  path = neg_12_dist_path,
+  filename_stem = "negative_12_items"
+)
+
+# Result note:
+# The 12 negative items show pronounced floor effects, with sparse endorsement of
+# high response categories. This distributional pattern supports retaining the
+# categorical-item workflow for the negative-item EFAs.
+
+# ---------------------------------------------------------------------------- #
+# Step 5: Parallel analysis for the 12 negative bias items ----
+# ---------------------------------------------------------------------------- #
+
+neg_12_pa_path <- file.path(neg_12_path, "parallel_analysis")
+
+pa_neg_12_minres <- run_pa_poly(
+  df = mdib_bl_neg_12,
+  path = neg_12_pa_path,
+  filename_stem = "negative_12_items",
+  fm = "minres",
+  n_iter = 100
+)
+
+pa_neg_12_ml <- run_pa_poly(
+  df = mdib_bl_neg_12,
+  path = neg_12_pa_path,
+  filename_stem = "negative_12_items",
+  fm = "ml",
+  n_iter = 100
+)
+
+pa_neg_12_decision <- summarize_pa_decision(
+  pa_minres = pa_neg_12_minres,
+  pa_ml = pa_neg_12_ml,
+  path = neg_12_pa_path,
+  filename_stem = "negative_12_items"
+)
+
+# Result note:
+# In the current PD run, the minres and ML polychoric parallel analyses both
+# supported a one-component upper bound for the 12 negative items. Following the
+# preregistered +/- 1 approach, the candidate WLSMV EFA solutions are therefore
+# 1 and 2 factors.
+#
+# Warning note:
+# The 12-negative-item polychoric parallel analyses may produce warnings that
+# items do not have the same number of observed response alternatives. This is
+# expected given the floor effects and sparse upper response categories.
+
+# ---------------------------------------------------------------------------- #
+# Step 6: WLSMV EFAs for the 12 negative bias items ----
+# ---------------------------------------------------------------------------- #
+
+mdib_bl_neg_12_ord <- make_ordered_mdib(mdib_bl_neg_12)
+
+fits_neg_12 <- run_wlsmv_efas(
+  df_ord = mdib_bl_neg_12_ord,
+  nfactors = pa_neg_12_decision$candidate_nfactors,
+  path = file.path(neg_12_path, "efa"),
+  filename_stem = "negative_12_items"
+)
+
+save(
+  mdib_bl_neg_12,
+  file = "./data/further_clean/mdib_bl_neg_12_pd.RData"
+)
+
+save(
+  mdib_bl_neg_12_ord,
+  file = "./data/further_clean/mdib_bl_neg_12_ord_pd.RData"
+)
+
+# Result note:
+# The 12-item 1-factor solution supported a broad negative bias factor, but
+# absolute fit was poor and mdib_neg_int_remember_1b had very low communality and
+# did not load saliently.
+#
+# The 12-item 2-factor solution improved relative fit and was more consistent
+# with the theorized internal/external distinction. Most external threat items
+# loaded on one factor and most internal threat items loaded on the other. However,
+# absolute fit remained poor, the factor correlation was high, and three item-
+# level concerns remained:
+# - mdib_neg_int_remember_1b did not load saliently on either factor.
+# - mdib_neg_ext_server_2a loaded primarily with the internal items despite being
+#   theorized as an external item.
+# - mdib_neg_int_email_6b showed a mild cross-loading in some geomin solutions,
+#   although its primary loading was on the internal factor and promax was cleaner.
+
+# ---------------------------------------------------------------------------- #
+# Step 7: Strategically chosen item-removal sequences for negative items ----
+# ---------------------------------------------------------------------------- #
+
+# These sequences are not exhaustive. They are chosen to reflect decision rules
+# that can be described in the paper:
+#
+# Sequence A: Start with the item that did not load saliently on either factor,
+# then remove items with salient cross-loadings or theory-inconsistent loadings.
+#
+# Sequence B: Start with the external item that loaded with the internal factor,
+# then remove the internal item with a mild cross-loading, and then remove the
+# nonsalient item if still needed.
+#
+# Sequence C: Start with the internal item with a mild cross-loading, then remove
+# the external item that loaded with the internal factor, and then remove the
+# nonsalient item if still needed.
+#
+# Result-informed rationale:
+# Across these sequences, mdib_neg_int_remember_1b and mdib_neg_ext_server_2a
+# were the clearest and most consistent problematic items. mdib_neg_int_email_6b
+# was less clearly problematic because it retained a salient primary loading on
+# the internal factor and was cleaner under promax rotation.
+
+removal_sequences <- list(
+  nonsalient_first_then_crossloadings = c(
+    "mdib_neg_int_remember_1b",
+    "mdib_neg_int_email_6b",
+    "mdib_neg_ext_server_2a"
+  ),
+  crossloadings_external_first = c(
+    "mdib_neg_ext_server_2a",
+    "mdib_neg_int_email_6b",
+    "mdib_neg_int_remember_1b"
+  ),
+  crossloadings_internal_first = c(
+    "mdib_neg_int_email_6b",
+    "mdib_neg_ext_server_2a",
+    "mdib_neg_int_remember_1b"
+  )
+)
+
+removal_path <- file.path(efa_path, "negative_item_removal_sequences")
+
+for (sequence_name in names(removal_sequences)) {
+  run_removal_sequence(
+    df = mdib_bl_neg_12,
+    sequence_name = sequence_name,
+    removal_order = removal_sequences[[sequence_name]],
+    base_path = removal_path
+  )
 }
 
-# Run function and export plots to PDF
-
-efa_path   <- "~/results/efa/"
-
-hists_path <- paste0(efa_path, "hists/")
-
-dir.create(hists_path, recursive = TRUE)
-
-pdf(paste0(hists_path, "mdib_bl_hists.pdf"), height = 6, width = 6)
-plot_item_hists(mdib_bl, 1:6)
-plot_item_hists(mdib_bl, 7:12)
-plot_item_hists(mdib_bl, 13:18)
-plot_item_hists(mdib_bl, 19:24)
-plot_item_hists(mdib_bl, 25:30)
-plot_item_hists(mdib_bl, 31:36)
-dev.off()
-
-# Note: Some item distributions are heavily skewed, especially for negative items.
-# Thus, use WLSMV estimation in addition to ML estimation with Sattora-Bentler
-# scaling (see Finney & DiStefano, 2013, p. 476; Rosellini & Brown, 2021, p. 64).
+# Result note:
+# All three sequences eventually support the same strict 9-item solution after
+# removing mdib_neg_int_remember_1b, mdib_neg_ext_server_2a, and
+# mdib_neg_int_email_6b. This 9-item solution gives the cleanest loading pattern,
+# with the retained external items loading on one factor and the retained internal
+# items loading on the other. However, this strict solution leaves only three
+# internal items and does not clearly improve model fit relative to the more
+# balanced 10-item solution that retains mdib_neg_int_email_6b.
 
 # ---------------------------------------------------------------------------- #
-# Inspect scree plot based on all items ----
+# Step 8: Focused sequence for comparing the 10-item and 9-item candidates ----
 # ---------------------------------------------------------------------------- #
 
-# impuate by mean
-df <- mdib_bl
-num_cols <- sapply(df, is.numeric)
-for (nm in names(df)[num_cols]) {
-  m <- mean(df[[nm]], na.rm = TRUE)
-  if (is.nan(m)) next  # 或者 m <- 0
-  df[[nm]][is.na(df[[nm]])] <- m
+# This focused sequence starts with the two most consistently problematic items:
+# - mdib_neg_int_remember_1b: nonsalient loading and very low communality.
+# - mdib_neg_ext_server_2a: external item that repeatedly loaded with internal items.
+#
+# Step 2 of this sequence gives the balanced 10-item candidate:
+# remove mdib_neg_int_remember_1b and mdib_neg_ext_server_2a, retain
+# mdib_neg_int_email_6b.
+#
+# Step 3 gives the stricter 9-item candidate:
+# also remove mdib_neg_int_email_6b.
+
+removal_sequences <- list(
+  nonsalient_then_external_then_internal = c(
+    "mdib_neg_int_remember_1b",
+    "mdib_neg_ext_server_2a",
+    "mdib_neg_int_email_6b"
+  )
+)
+
+removal_path <- file.path(efa_path, "negative_item_removal_sequences2")
+
+for (sequence_name in names(removal_sequences)) {
+  run_removal_sequence(
+    df = mdib_bl_neg_12,
+    sequence_name = sequence_name,
+    removal_order = removal_sequences[[sequence_name]],
+    base_path = removal_path
+  )
 }
 
-
-# Obtain eigenvalues of correlation matrix
-
-#eigen(cor(mdib_bl))$values
-eigen(cor(df))$values
-
-# Plot eigenvalues as scree plot to help decide how many factors to retain, which
-# shows an unclear break point between cliff and scree
-
-all_items_path <- paste0(efa_path,       "all_items/")
-scree_path     <- paste0(all_items_path, "scree/")
-
-dir.create(scree_path, recursive = TRUE)
-
-pdf(paste0(scree_path, "mdib_bl_scree.pdf"), height = 6, width = 6)
-scree(mdib_bl, factors = FALSE, pc = TRUE)
-dev.off()
-# three to four
-
-# Given this, also consider parallel analysis, which suggests an upper bound (see 
-# Montoya & Edwards, 2021, p. 416) of 4 factors (based on principal axis factoring;
-# "PA-PAF-m" in Lim & Jahng, 2019) or 4 components (based on principal component 
-# analysis; "PA-PCA-m"). Lim and Jahng (2019) found that PA-PCA-m is better across 
-# a wide variety of situations (inc. ordinal data) and recommend that. (Note that 
-# "ncomp" suggests 2 components, whereas the eigenvalues of 4 components actually 
-# exceed the mean. William Revelle confirmed via email on 7/13/2023 that "fa.parallel"
-# defaults to a "quant" argument of .95, meaning the 95% CI is used as the threshold 
-# rather than the mean, in contrast to the documentation, which needs to be fixed.)
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_ml.pdf"), height = 6, width = 6)
-#(result_ml <- fa.parallel(mdib_bl, fm = "ml", n.iter = 100))
-(result_ml <- fa.parallel(df, fm = "ml", n.iter = 100))
-dev.off()
-
-result_ml$ncomp == 2
-
-sum(result_ml$pc.values > result_ml$pc.sim)  == 2
-sum(result_ml$pc.values > result_ml$pc.simr) == 2
-
-# Also do parallel analysis of polychoric correlations (given some heavily skewed 
-# items--see above). Per personal correspondence on 9/17/2023, William Revelle 
-# suggested setting "correct = 0" to avoid error/warnings when setting 'cor = "poly"'
-# (though some warnings remain). Unclear what estimation method to use for polychoric 
-# correlations, so try both "ML" (as above, but with only 10 iterations as it takes
-# long to run) and "minres" (default, incl. for "fa.parallel.poly()"). Results same.
-
-# Two kinds of warnings for "ML":
-# 1: In cor.smooth(mat) : Matrix was not positive definite, smoothing was done
-# 2: In polychoric(sampledata, correct = correct) :
-#    The items do not have an equal number of response alternatives, global set to FALSE.
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_poly_ml.pdf"), height = 6, width = 6)
-#(result_poly_ml <- fa.parallel(mdib_bl, fm = "ml", n.iter = 10, correct = 0, cor = "poly"))
-(result_poly_ml <- fa.parallel(df, fm = "ml", n.iter = 10, correct = 0, cor = "poly"))
-dev.off()
-
-result_poly_ml$ncomp == 3
-
-sum(result_poly_ml$pc.values > result_poly_ml$pc.sim)  == 3
-sum(result_poly_ml$pc.values > result_poly_ml$pc.simr) == 2
-# 2 
-
-# Note for "minres":
-# In smc, smcs < 0 were set to .0
-
-# Three kinds of warnings for "minres":
-# 1: In cor.smooth(mat) : Matrix was not positive definite, smoothing was done
-# 2: In fa.stats(r = r, f = f, phi = phi, n.obs = n.obs, np.obs = np.obs,  ... :
-#    The estimated weights for the factor scores are probably incorrect. Try a different 
-#    factor score estimation method.
-# 3: In polychoric(sampledata, correct = correct) :
-#    The items do not have an equal number of response alternatives, global set to FALSE.
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_poly_minres.pdf"), height = 6, width = 6)
-#(result_poly_minres <- fa.parallel(mdib_bl, correct = 0, cor = "poly"))
-(result_poly_minres <- fa.parallel(df, correct = 0, cor = "poly"))
-dev.off()
-
-result_poly_minres$ncomp == 3
-
-sum(result_poly_minres$pc.values > result_poly_minres$pc.sim)  == 3
-sum(result_poly_minres$pc.values > result_poly_minres$pc.simr) == 4
+# Final interpretation note:
+# Based on the current PD EFA results, the most balanced reduced-item candidate is
+# the 10-item solution that removes mdib_neg_int_remember_1b and
+# mdib_neg_ext_server_2a but retains mdib_neg_int_email_6b. This solution removes
+# the two clearest problematic items, preserves four internal items, and yields a
+# clear internal/external two-factor pattern. The 9-item solution that also removes
+# mdib_neg_int_email_6b can be retained as a stricter sensitivity or alternative
+# solution because it gives the cleanest loading pattern but leaves only three
+# internal items.
+#
+# These comments document the decision logic for discussion with the team. The
+# final retained item set should be decided after reviewing the EFA notes, factor
+# loading tables, model fit, theoretical coverage, and consistency with the HD
+# sample.
 
 # ---------------------------------------------------------------------------- #
-# Run EFA based on all items using "MLM" estimator ----
+# End of script ----
 # ---------------------------------------------------------------------------- #
-
-# Based on scree plot, considered retaining 2 to 9 factors, but parallel analysis 
-# suggests a smaller number (up to 4, though looking at +/- 1 is recommended; Lim 
-# & Jahng, 2019). Thus, consider 2, 3, 4, or 5.
-
-
-# Note: Random seed must be set for each analysis for reproducible results
-
-
-# No Heywood cases
-
-set.seed(1234)
-fit_oblimin_mlm <- efa(data = df, nfactors = 2:5, rotation = "oblimin", 
-                       estimator = "MLM", check.vcov = FALSE)
-set.seed(1234)
-fit_geomin_mlm  <- efa(data = df, nfactors = 2:5, rotation = "geomin",  
-                       estimator = "MLM", check.vcov = FALSE)
-set.seed(1234)
-fit_promax_mlm  <- efa(data = df, nfactors = 2:5, rotation = "promax",  
-                       estimator = "MLM")
-
-# Export basic results and details to TXT and loadings to CSV
-
-export_efa_res(fit_oblimin_mlm, all_items_path, "oblimin_mlm")
-export_efa_res(fit_geomin_mlm,  all_items_path, "geomin_mlm")
-export_efa_res(fit_promax_mlm,  all_items_path, "promax_mlm")
-
-# ---------------------------------------------------------------------------- #
-# Run EFA based on all items using WLSMV estimator ----
-# ---------------------------------------------------------------------------- #
-
-# Convert columns to ordered factors
-
-df_ord <- as.data.frame(lapply(df, factor, levels = 0:4, ordered = TRUE))
-
-# For "mdib_ben_int_email_6a", which no participant rated 0, remove the level 0
-
-# compute the max and min values for each column
-num_cols <- sapply(df, is.numeric)
-res <- sapply(df[ , num_cols, drop = FALSE], range, na.rm = TRUE)
-res
-# mdib_ben_int_remember_1c (1,4); mdib_neg_ext_server_2a (0,3)
-
-df_ord$mdib_ben_int_remember_1c <- droplevels(df_ord$mdib_ben_int_remember_1c)
-levels(df_ord$mdib_ben_int_remember_1c)[levels(df_ord$mdib_ben_int_remember_1c) == 1] <- "0 or 1"
-
-df_ord$mdib_neg_ext_server_2a <- droplevels(df_ord$mdib_neg_ext_server_2a)
-levels(df_ord$mdib_neg_ext_server_2a)[levels(df_ord$mdib_neg_ext_server_2a) == 3] <- "3 or 4"
-
-
-#mdib_bl_ord$mdib_ben_int_email_6a <- droplevels(mdib_bl_ord$mdib_ben_int_email_6a)
-
-
-#levels(mdib_bl_ord$mdib_ben_int_email_6a)[levels(mdib_bl_ord$mdib_ben_int_email_6a) == 1] <- "0 or 1"
-
-# Consider 2, 3, 4, or 5 factors, as determined above
-
-set.seed(1234)
-fit_oblimin_wlsmv <- efa(data = df_ord, nfactors = 2:5, rotation = "oblimin", 
-                         estimator = "WLSMV", check.vcov = FALSE)
-set.seed(1234)
-fit_geomin_wlsmv  <- efa(data = df_ord, nfactors = 2:5, rotation = "geomin",  
-                         estimator = "WLSMV", check.vcov = FALSE)
-set.seed(1234)
-fit_promax_wlsmv  <- efa(data = df_ord, nfactors = 2:5, rotation = "promax",  
-                         estimator = "WLSMV")
-
-# Export basic results and details to TXT and loadings to CSV
-
-export_efa_res(fit_oblimin_wlsmv, all_items_path, "oblimin_wlsmv")
-export_efa_res(fit_geomin_wlsmv,  all_items_path, "geomin_wlsmv")
-export_efa_res(fit_promax_wlsmv,  all_items_path, "promax_wlsmv")
-
-# ---------------------------------------------------------------------------- #
-# Inspect scree plot based on only theorized negative bias items ----
-# ---------------------------------------------------------------------------- #
-
-# Restrict to 12 theorized negative bias items
-
-#mdib_bl_neg <- mdib_bl[, names(mdib_bl[grepl("mdib_neg", names(mdib_bl))])]
-
-mdib_bl_neg <- df[, names(df[grepl("mdib_neg", names(mdib_bl))])]
-
-length(mdib_bl_neg) == 12
-
-# Obtain eigenvalues of correlation matrix
-
-eigen(cor(mdib_bl_neg))$values
-
-# Plot eigenvalues as scree plot to help decide how many factors to retain, which
-# shows an unclear break point between cliff and scree
-
-neg_items_path <- paste0(efa_path,       "neg_items/")
-scree_path     <- paste0(neg_items_path, "scree/")
-
-dir.create(scree_path, recursive = TRUE)
-
-pdf(paste0(scree_path, "mdib_bl_scree.pdf"), height = 6, width = 6)
-scree(mdib_bl_neg, factors = FALSE, pc = TRUE)
-dev.off()
-
-# Given this, also consider parallel analysis, which suggests an upper bound of 1 
-# factor or 1 component (see above)
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_ml.pdf"), height = 6, width = 6)
-(result_ml <- fa.parallel(mdib_bl_neg, fm = "ml", n.iter = 100))
-dev.off()
-
-result_ml$ncomp == 1
-
-sum(result_ml$pc.values > result_ml$pc.sim) == 1
-sum(result_ml$pc.values > result_ml$pc.simr) == 1
-
-# Also do parallel analysis of polychoric correlations (see above)
-
-# Same two kinds of warnings as above for "ML"
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_poly_ml.pdf"), height = 6, width = 6)
-(result_poly_ml <- fa.parallel(mdib_bl_neg, fm = "ml", n.iter = 10, correct = 0, cor = "poly"))
-dev.off()
-
-result_poly_ml$ncomp == 1
-
-sum(result_poly_ml$pc.values > result_poly_ml$pc.sim)  == 1
-sum(result_poly_ml$pc.values > result_poly_ml$pc.simr) == 1
-
-# Same note and three kinds of warnings as above for "minres". And a fourth kind of warning:
-# In fac(r = r, nfactors = nfactors, n.obs = n.obs, rotate = rotate,  ... :
-#   An ultra-Heywood case was detected.  Examine the results carefully
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_poly_minres.pdf"), height = 6, width = 6)
-(result_poly_minres <- fa.parallel(mdib_bl_neg, correct = 0, cor = "poly"))
-dev.off()
-
-result_poly_minres$ncomp == 1
-
-sum(result_poly_minres$pc.values > result_poly_minres$pc.sim)  == 1
-sum(result_poly_minres$pc.values > result_poly_minres$pc.simr) == 1
-
-# ---------------------------------------------------------------------------- #
-# Run EFA based on only negative bias items using "MLM" estimator ----
-# ---------------------------------------------------------------------------- #
-
-# Based on scree plot, considered retaining 1 to 3 factors, but parallel analysis 
-# suggests a smaller number (up to 1, though looking at +/- 1 is recommended; Lim 
-# & Jahng, 2019). Thus, consider 1 or 2.
-
-# Note: No warnings or Heywood cases
-
-set.seed(1234)
-fit_oblimin_mlm <- efa(data = mdib_bl_neg, nfactors = 1:2, rotation = "oblimin", 
-                       estimator = "MLM")
-#Warning message:
-#lavaan->lav_model_vcov():  
-#  The variance-covariance matrix of the estimated parameters (vcov) does not appear to be positive definite! The smallest eigenvalue (= 
-#                                                                                                                                        -5.507238e-32) is smaller than zero. This may be a symptom that the model is not identified. 
-
-set.seed(1234)
-fit_geomin_mlm  <- efa(data = mdib_bl_neg, nfactors = 1:2, rotation = "geomin",  
-                       estimator = "MLM")
-#Warning message:
-#lavaan->lav_model_vcov():  
-#  The variance-covariance matrix of the estimated parameters (vcov) does not appear to be positive definite! The smallest eigenvalue (= 
- #                                                                                                                                       -9.212384e-32) is smaller than zero. This may be a symptom that the model is not identified. 
-
-set.seed(1234)
-fit_promax_mlm  <- efa(data = mdib_bl_neg, nfactors = 1:2, rotation = "promax",  
-                       estimator = "MLM")
-
-# Export basic results and details to TXT and loadings to CSV
-
-export_efa_res(fit_oblimin_mlm, neg_items_path, "oblimin_mlm")
-export_efa_res(fit_geomin_mlm,  neg_items_path, "geomin_mlm")
-export_efa_res(fit_promax_mlm,  neg_items_path, "promax_mlm")
-
-# ---------------------------------------------------------------------------- #
-# Run EFA based on only negative bias items using "WLSMV" estimator ----
-# ---------------------------------------------------------------------------- #
-
-# Convert columns to ordered factors
-
-mdib_bl_neg_ord <- as.data.frame(lapply(mdib_bl_neg, factor, levels = 0:4, ordered = TRUE))
-
-mdib_bl_neg_ord$mdib_neg_ext_server_2a <- droplevels(mdib_bl_neg_ord$mdib_neg_ext_server_2a)
-levels(mdib_bl_neg_ord$mdib_neg_ext_server_2a)[levels(mdib_bl_neg_ord$mdib_neg_ext_server_2a) == 3] <- "3 or 4"
-
-# the same reason
-
-# Consider 1 or 2 factors, as determined above
-
-# Note: No Heywood cases
-
-set.seed(1234)
-fit_oblimin_wlsmv <- efa(data = mdib_bl_neg_ord, nfactors = 1:2, rotation = "oblimin", 
-                         estimator = "WLSMV", check.vcov = FALSE)
-set.seed(1234)
-fit_geomin_wlsmv  <- efa(data = mdib_bl_neg_ord, nfactors = 1:2, rotation = "geomin",  
-                         estimator = "WLSMV", check.vcov = FALSE)
-set.seed(1234)
-fit_promax_wlsmv  <- efa(data = mdib_bl_neg_ord, nfactors = 1:2, rotation = "promax",  
-                         estimator = "WLSMV")
-
-# Export basic results and details to TXT and loadings to CSV
-
-export_efa_res(fit_oblimin_wlsmv, neg_items_path, "oblimin_wlsmv")
-export_efa_res(fit_geomin_wlsmv,  neg_items_path, "geomin_wlsmv")
-export_efa_res(fit_promax_wlsmv,  neg_items_path, "promax_wlsmv")
-
-# ---------------------------------------------------------------------------- #
-# Inspect scree plot based on 11 reduced negative bias items ----
-# ---------------------------------------------------------------------------- #
-
-# Dandan: From 12 theorized negative bias items, consider excluding two items.
-# "mdib_neg_int_remember_1b" that are theorized to be internal items but that loaded with external items.
-# "mdib_neg_ext_server_2a" is theorized to be external items but that loaded with internal items. Start by
-# excluding "mdib_neg_ext_server_2a", which loaded more strongly than "mdib_neg_int_remember_1b"
-
-# From 12 theorized negative bias items, consider excluding two items that are
-# theorized to be external items but that loaded with internal items. Start by
-# excluding "mdib_neg_ext_walk_9c", which loaded more strongly with internal
-# items than "mdib_neg_ext_server_2a"
-
-mdib_bl_neg_11 <- mdib_bl_neg[, names(mdib_bl_neg)[names(mdib_bl_neg) != 
-                                                     "mdib_neg_ext_server_2a"]]
-
-length(mdib_bl_neg_11) == 11
-
-# Obtain eigenvalues of correlation matrix
-
-eigen(cor(mdib_bl_neg_11))$values
-
-# Plot eigenvalues as scree plot to help decide how many factors to retain, which
-# shows an unclear break point between cliff and scree
-
-neg_items_11_path <- paste0(efa_path, "neg_items_11/")
-scree_path        <- paste0(neg_items_11_path, "scree/")
-
-dir.create(scree_path, recursive = TRUE)
-
-pdf(paste0(scree_path, "mdib_bl_scree.pdf"), height = 6, width = 6)
-scree(mdib_bl_neg_11, factors = FALSE, pc = TRUE)
-dev.off()
-
-# Given this, also consider parallel analysis, which suggests an upper bound of 1 
-# factor or 1 component (see above)
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_ml.pdf"), height = 6, width = 6)
-(result_ml <- fa.parallel(mdib_bl_neg_11, fm = "ml", n.iter = 100))
-dev.off()
-
-result_ml$ncomp == 1
-
-sum(result_ml$pc.values > result_ml$pc.sim) == 1
-sum(result_ml$pc.values > result_ml$pc.simr) == 1
-
-# Also do parallel analysis of polychoric correlations (see above)
-
-# One kind of warning for "ML":
-# In polychoric(sampledata, correct = correct) :
-#   The items do not have an equal number of response alternatives, global set to FALSE.
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_poly_ml.pdf"), height = 6, width = 6)
-(result_poly_ml <- fa.parallel(mdib_bl_neg_11, fm = "ml", n.iter = 10, correct = 0, cor = "poly"))
-dev.off()
-
-result_poly_ml$ncomp == 1
-
-sum(result_poly_ml$pc.values > result_poly_ml$pc.sim)  == 1
-sum(result_poly_ml$pc.values > result_poly_ml$pc.simr) == 1
-
-# Similar warnings (three kinds) as above for "minres":
-# In polychoric(sampledata, correct = correct) :
-#   The items do not have an equal number of response alternatives, global set to FALSE.
-# In fa.stats(r = r, f = f, phi = phi, n.obs = n.obs, np.obs = np.obs,  ... :
-#   The estimated weights for the factor scores are probably incorrect. Try a different
-#   factor score estimation method.
-# In fac(r = r, nfactors = nfactors, n.obs = n.obs, rotate = rotate,  ... :
-#   An ultra-Heywood case was detected.  Examine the results carefully
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_poly_minres.pdf"), height = 6, width = 6)
-(result_poly_minres <- fa.parallel(mdib_bl_neg_11, correct = 0, cor = "poly"))
-dev.off()
-
-result_poly_minres$ncomp == 1
-
-sum(result_poly_minres$pc.values > result_poly_minres$pc.sim)  == 1
-sum(result_poly_minres$pc.values > result_poly_minres$pc.simr) == 1
-
-# ---------------------------------------------------------------------------- #
-# Run EFA based on 11 reduced negative bias items using "MLM" estimator ----
-# ---------------------------------------------------------------------------- #
-
-# Based on scree plot, considered retaining 1 to 3 factors, but parallel analysis 
-# suggests a smaller number (up to 1, though looking at +/- 1 is recommended; Lim 
-# & Jahng, 2019). Thus, consider 1 or 2.
-
-# Note: No warnings or Heywood cases
-
-set.seed(1234)
-fit_oblimin_mlm <- efa(data = mdib_bl_neg_11, nfactors = 1:2, rotation = "oblimin", 
-                       estimator = "MLM")
-set.seed(1234)
-fit_geomin_mlm  <- efa(data = mdib_bl_neg_11, nfactors = 1:2, rotation = "geomin",  
-                       estimator = "MLM")
-set.seed(1234)
-fit_promax_mlm  <- efa(data = mdib_bl_neg_11, nfactors = 1:2, rotation = "promax",  
-                       estimator = "MLM")
-
-# Export basic results and details to TXT and loadings to CSV
-
-export_efa_res(fit_oblimin_mlm, neg_items_11_path, "oblimin_mlm")
-export_efa_res(fit_geomin_mlm,  neg_items_11_path, "geomin_mlm")
-export_efa_res(fit_promax_mlm,  neg_items_11_path, "promax_mlm")
-
-# ---------------------------------------------------------------------------- #
-# Run EFA based on 11 reduced negative bias items using "WLSMV" estimator ----
-# ---------------------------------------------------------------------------- #
-
-# Convert columns to ordered factors
-
-mdib_bl_neg_11_ord <- as.data.frame(lapply(mdib_bl_neg_11, factor, levels = 0:4, ordered = TRUE))
-
-# Consider 1 or 2 factors, as determined above
-
-# Note: No Heywood cases
-
-set.seed(1234)
-fit_oblimin_wlsmv <- efa(data = mdib_bl_neg_11_ord, nfactors = 1:2, rotation = "oblimin", 
-                         estimator = "WLSMV", check.vcov = FALSE)
-set.seed(1234)
-fit_geomin_wlsmv  <- efa(data = mdib_bl_neg_11_ord, nfactors = 1:2, rotation = "geomin",  
-                         estimator = "WLSMV", check.vcov = FALSE)
-set.seed(1234)
-fit_promax_wlsmv  <- efa(data = mdib_bl_neg_11_ord, nfactors = 1:2, rotation = "promax",  
-                         estimator = "WLSMV")
-
-# Export basic results and details to TXT and loadings to CSV
-
-export_efa_res(fit_oblimin_wlsmv, neg_items_11_path, "oblimin_wlsmv")
-export_efa_res(fit_geomin_wlsmv,  neg_items_11_path, "geomin_wlsmv")
-export_efa_res(fit_promax_wlsmv,  neg_items_11_path, "promax_wlsmv")
-
-# ---------------------------------------------------------------------------- #
-# Inspect scree plot based on 10 reduced negative bias items ----
-# ---------------------------------------------------------------------------- #
-
-# Now exclude "mdib_neg_int_remember_1b"
-
-mdib_bl_neg_10 <- mdib_bl_neg_11[, names(mdib_bl_neg_11)[names(mdib_bl_neg_11) !=
-                                                           "mdib_neg_int_remember_1b"]]
-
-length(mdib_bl_neg_10) == 10
-
-# Obtain eigenvalues of correlation matrix
-
-eigen(cor(mdib_bl_neg_10))$values
-
-# Plot eigenvalues as scree plot to help decide how many factors to retain, which
-# shows an unclear break point between cliff and scree
-
-neg_items_10_path <- paste0(efa_path,       "neg_items_10/")
-scree_path        <- paste0(neg_items_10_path, "scree/")
-
-dir.create(scree_path, recursive = TRUE)
-
-pdf(paste0(scree_path, "mdib_bl_scree.pdf"), height = 6, width = 6)
-scree(mdib_bl_neg_10, factors = FALSE, pc = TRUE)
-dev.off()
-
-# Given this, also consider parallel analysis, which suggests an upper bound of 1 
-# factor or 1 component (see above)
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_ml.pdf"), height = 6, width = 6)
-(result_ml <- fa.parallel(mdib_bl_neg_10, fm = "ml", n.iter = 100))
-dev.off()
-
-result_ml$ncomp == 1
-
-sum(result_ml$pc.values > result_ml$pc.sim) == 1
-sum(result_ml$pc.values > result_ml$pc.simr) == 1
-
-# Also do parallel analysis of polychoric correlations (see above)
-
-# One kind of warning as above for "ML":
-# In polychoric(sampledata, correct = correct) :
-#   The items do not have an equal number of response alternatives, global set to FALSE.
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_poly_ml.pdf"), height = 6, width = 6)
-(result_poly_ml <- fa.parallel(mdib_bl_neg_10, fm = "ml", n.iter = 10, correct = 0, cor = "poly"))
-dev.off()
-
-result_poly_ml$ncomp == 1
-
-sum(result_poly_ml$pc.values > result_poly_ml$pc.sim)  == 1
-sum(result_poly_ml$pc.values > result_poly_ml$pc.simr) == 1
-
-# Similar warnings (three kinds) as above for "minres":
-# In polychoric(sampledata, correct = correct) :
-#   The items do not have an equal number of response alternatives, global set to FALSE.
-# In fa.stats(r = r, f = f, phi = phi, n.obs = n.obs, np.obs = np.obs,  ... :
-#   The estimated weights for the factor scores are probably incorrect. Try a different
-#   factor score estimation method.
-# In fac(r = r, nfactors = nfactors, n.obs = n.obs, rotate = rotate,  ... :
-#   An ultra-Heywood case was detected.  Examine the results carefully
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_poly_minres.pdf"), height = 6, width = 6)
-(result_poly_minres <- fa.parallel(mdib_bl_neg_10, correct = 0, cor = "poly"))
-dev.off()
-
-result_poly_minres$ncomp == 1
-
-sum(result_poly_minres$pc.values > result_poly_minres$pc.sim)  == 1
-sum(result_poly_minres$pc.values > result_poly_minres$pc.simr) == 1
-
-# ---------------------------------------------------------------------------- #
-# Run EFA based on 10 reduced negative bias items using "MLM" estimator ----
-# ---------------------------------------------------------------------------- #
-
-# Based on scree plot, considered retaining 1 to 3 factors, but parallel analysis 
-# suggests a smaller number (up to 1, though looking at +/- 1 is recommended; Lim 
-# & Jahng, 2019). Thus, consider 1 or 2.
-
-# Note: No warnings or Heywood cases
-
-set.seed(1234)
-fit_oblimin_mlm <- efa(data = mdib_bl_neg_10, nfactors = 1:2, rotation = "oblimin", 
-                       estimator = "MLM")
-set.seed(1234)
-fit_geomin_mlm  <- efa(data = mdib_bl_neg_10, nfactors = 1:2, rotation = "geomin",  
-                       estimator = "MLM")
-set.seed(1234)
-fit_promax_mlm  <- efa(data = mdib_bl_neg_10, nfactors = 1:2, rotation = "promax",  
-                       estimator = "MLM")
-
-# Export basic results and details to TXT and loadings to CSV
-
-export_efa_res(fit_oblimin_mlm, neg_items_10_path, "oblimin_mlm")
-export_efa_res(fit_geomin_mlm,  neg_items_10_path, "geomin_mlm")
-export_efa_res(fit_promax_mlm,  neg_items_10_path, "promax_mlm")
-
-# ---------------------------------------------------------------------------- #
-# Run EFA based on 10 reduced negative bias items using "WLSMV" estimator ----
-# ---------------------------------------------------------------------------- #
-
-# Convert columns to ordered factors
-
-mdib_bl_neg_10_ord <- as.data.frame(lapply(mdib_bl_neg_10, factor, levels = 0:4, ordered = TRUE))
-
-# Consider 1 or 2 factors, as determined above
-
-# Note: No warnings or Heywood cases
-
-set.seed(1234)
-fit_oblimin_wlsmv <- efa(data = mdib_bl_neg_10_ord, nfactors = 1:2, rotation = "oblimin", 
-                         estimator = "WLSMV")
-set.seed(1234)
-fit_geomin_wlsmv  <- efa(data = mdib_bl_neg_10_ord, nfactors = 1:2, rotation = "geomin",  
-                         estimator = "WLSMV")
-set.seed(1234)
-fit_promax_wlsmv  <- efa(data = mdib_bl_neg_10_ord, nfactors = 1:2, rotation = "promax",  
-                         estimator = "WLSMV")
-
-# Export basic results and details to TXT and loadings to CSV
-
-export_efa_res(fit_oblimin_wlsmv, neg_items_10_path, "oblimin_wlsmv")
-export_efa_res(fit_geomin_wlsmv,  neg_items_10_path, "geomin_wlsmv")
-export_efa_res(fit_promax_wlsmv,  neg_items_10_path, "promax_wlsmv")
-
-# ---------------------------------------------------------------------------- #
-# Inspect scree plot based on 9 reduced negative bias items ----
-# ---------------------------------------------------------------------------- #
-
-# From 10 theorized negative bias items, consider excluding item theorized to be 
-# an internal item ("mdib_neg_int_email_6b") but that has moderate cross-loading
-# with external items-the same thing happened.
-
-mdib_bl_neg_9 <- mdib_bl_neg_10[, names(mdib_bl_neg_10)[names(mdib_bl_neg_10) !=
-                                                          "mdib_neg_int_email_6b"]]
-describe(mdib_bl_neg_9[,1:6])
-mdib_bl_neg_9[,1:6]
-
-# mean and sd for external 
-
-
-length(mdib_bl_neg_9) == 9
-
-# Obtain eigenvalues of correlation matrix
-
-eigen(cor(mdib_bl_neg_9))$values
-
-# Plot eigenvalues as scree plot to help decide how many factors to retain, which
-# shows an unclear break point between cliff and scree
-
-neg_items_9_path <- paste0(efa_path,         "neg_items_09/")
-scree_path       <- paste0(neg_items_9_path, "scree/")
-
-dir.create(scree_path, recursive = TRUE)
-
-pdf(paste0(scree_path, "mdib_bl_scree.pdf"), height = 6, width = 6)
-scree(mdib_bl_neg_9, factors = FALSE, pc = TRUE)
-dev.off()
-
-# Given this, also consider parallel analysis, which suggests an upper bound of 
-# 1 component (see above)
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_ml.pdf"), height = 6, width = 6)
-(result_ml <- fa.parallel(mdib_bl_neg_9, fm = "ml", n.iter = 100))
-dev.off()
-
-result_ml$ncomp == 1
-
-sum(result_ml$pc.values > result_ml$pc.sim) == 1
-sum(result_ml$pc.values > result_ml$pc.simr) == 1
-
-# Also do parallel analysis of polychoric correlations (see above)
-
-# One kind of warning as above for "ML":
-# In polychoric(sampledata, correct = correct) :
-#   The items do not have an equal number of response alternatives, global set to FALSE.
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_poly_ml.pdf"), height = 6, width = 6)
-(result_poly_ml <- fa.parallel(mdib_bl_neg_9, fm = "ml", n.iter = 10, correct = 0, cor = "poly"))
-dev.off()
-
-result_poly_ml$ncomp == 1
-
-sum(result_poly_ml$pc.values > result_poly_ml$pc.sim)  == 1
-sum(result_poly_ml$pc.values > result_poly_ml$pc.simr) == 1
-
-# Similar warnings (three kinds) as above for "minres":
-# In polychoric(sampledata, correct = correct) :
-#   The items do not have an equal number of response alternatives, global set to FALSE.
-# In fa.stats(r = r, f = f, phi = phi, n.obs = n.obs, np.obs = np.obs,  ... :
-#   The estimated weights for the factor scores are probably incorrect. Try a different
-#   factor score estimation method.
-# In fac(r = r, nfactors = nfactors, n.obs = n.obs, rotate = rotate,  ... :
-#   An ultra-Heywood case was detected.  Examine the results carefully
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_poly_minres.pdf"), height = 6, width = 6)
-(result_poly_minres <- fa.parallel(mdib_bl_neg_9, correct = 0, cor = "poly"))
-dev.off()
-
-result_poly_minres$ncomp == 1
-
-sum(result_poly_minres$pc.values > result_poly_minres$pc.sim)  == 1
-
-sum(result_poly_minres$pc.values > result_poly_minres$pc.simr) == 1
-
-# ---------------------------------------------------------------------------- #
-# Run EFA based on 9 reduced negative bias items using "MLM" estimator ----
-# ---------------------------------------------------------------------------- #
-
-# Based on scree plot, considered retaining 1 to 3 factors, but parallel analysis 
-# suggests a smaller number (up to 1, though looking at +/- 1 is recommended; Lim 
-# & Jahng, 2019). Thus, consider 1 or 2.
-
-# Note: No warnings or Heywood cases
-
-set.seed(1234)
-fit_oblimin_mlm <- efa(data = mdib_bl_neg_9, nfactors = 1:2, rotation = "oblimin", 
-                       estimator = "MLM")
-set.seed(1234)
-fit_geomin_mlm  <- efa(data = mdib_bl_neg_9, nfactors = 1:2, rotation = "geomin",  
-                       estimator = "MLM")
-set.seed(1234)
-fit_promax_mlm  <- efa(data = mdib_bl_neg_9, nfactors = 1:2, rotation = "promax",  
-                       estimator = "MLM")
-
-# Export basic results and details to TXT and loadings to CSV
-
-export_efa_res(fit_oblimin_mlm, neg_items_9_path, "oblimin_mlm")
-export_efa_res(fit_geomin_mlm,  neg_items_9_path, "geomin_mlm")
-export_efa_res(fit_promax_mlm,  neg_items_9_path, "promax_mlm")
-
-# ---------------------------------------------------------------------------- #
-# Run EFA based on 9 reduced negative bias items using "WLSMV" estimator ----
-# ---------------------------------------------------------------------------- #
-
-# Convert columns to ordered factors
-
-mdib_bl_neg_9_ord <- as.data.frame(lapply(mdib_bl_neg_9, factor, levels = 0:4, ordered = TRUE))
-
-# Consider 1 or 2 factors, as determined above
-
-# Note: No warnings or Heywood cases
-
-set.seed(1234)
-fit_oblimin_wlsmv <- efa(data = mdib_bl_neg_9_ord, nfactors = 1:2, rotation = "oblimin", 
-                         estimator = "WLSMV")
-set.seed(1234)
-fit_geomin_wlsmv  <- efa(data = mdib_bl_neg_9_ord, nfactors = 1:2, rotation = "geomin",  
-                         estimator = "WLSMV")
-set.seed(1234)
-fit_promax_wlsmv  <- efa(data = mdib_bl_neg_9_ord, nfactors = 1:2, rotation = "promax",  
-                         estimator = "WLSMV")
-
-# Export basic results and details to TXT and loadings to CSV
-
-export_efa_res(fit_oblimin_wlsmv, neg_items_9_path, "oblimin_wlsmv")
-export_efa_res(fit_geomin_wlsmv,  neg_items_9_path, "geomin_wlsmv")
-export_efa_res(fit_promax_wlsmv,  neg_items_9_path, "promax_wlsmv")
-
-
-# ---------------------------------------------------------------------------- #
-# Inspect scree plot based on 8 reduced negative bias items ----
-# ---------------------------------------------------------------------------- #
-
-# From 9 theorized negative bias items, consider excluding item theorized to be 
-# an external item ("mdib_neg_ext_exercise_7a") but that has moderate cross-loading
-# with internal items-the same thing happened.
-
-mdib_bl_neg_8 <- mdib_bl_neg_9[, names(mdib_bl_neg_9)[names(mdib_bl_neg_9) !=
-                                                          "mdib_neg_ext_exercise_7a"]]
-
-length(mdib_bl_neg_8) == 8
-
-# Obtain eigenvalues of correlation matrix
-
-eigen(cor(mdib_bl_neg_8))$values
-
-# Plot eigenvalues as scree plot to help decide how many factors to retain, which
-# shows an unclear break point between cliff and scree
-
-neg_items_8_path <- paste0(efa_path,         "neg_items_08/")
-scree_path       <- paste0(neg_items_8_path, "scree/")
-
-dir.create(scree_path, recursive = TRUE)
-
-pdf(paste0(scree_path, "mdib_bl_scree.pdf"), height = 6, width = 6)
-scree(mdib_bl_neg_8, factors = FALSE, pc = TRUE)
-dev.off()
-
-# Given this, also consider parallel analysis, which suggests an upper bound of 
-# 1 component (see above)
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_ml.pdf"), height = 6, width = 6)
-(result_ml <- fa.parallel(mdib_bl_neg_8, fm = "ml", n.iter = 100))
-dev.off()
-
-result_ml$ncomp == 1
-
-sum(result_ml$pc.values > result_ml$pc.sim) == 1
-sum(result_ml$pc.values > result_ml$pc.simr) == 1
-
-# Also do parallel analysis of polychoric correlations (see above)
-
-# One kind of warning as above for "ML":
-# In polychoric(sampledata, correct = correct) :
-#   The items do not have an equal number of response alternatives, global set to FALSE.
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_poly_ml.pdf"), height = 6, width = 6)
-(result_poly_ml <- fa.parallel(mdib_bl_neg_8, fm = "ml", n.iter = 10, correct = 0, cor = "poly"))
-dev.off()
-
-result_poly_ml$ncomp == 1
-
-sum(result_poly_ml$pc.values > result_poly_ml$pc.sim)  == 1
-sum(result_poly_ml$pc.values > result_poly_ml$pc.simr) == 1
-
-# Similar warnings (three kinds) as above for "minres":
-# In polychoric(sampledata, correct = correct) :
-#   The items do not have an equal number of response alternatives, global set to FALSE.
-# In fa.stats(r = r, f = f, phi = phi, n.obs = n.obs, np.obs = np.obs,  ... :
-#   The estimated weights for the factor scores are probably incorrect. Try a different
-#   factor score estimation method.
-# In fac(r = r, nfactors = nfactors, n.obs = n.obs, rotate = rotate,  ... :
-#   An ultra-Heywood case was detected.  Examine the results carefully
-
-pdf(paste0(scree_path, "mdib_bl_scree_pa_poly_minres.pdf"), height = 6, width = 6)
-(result_poly_minres <- fa.parallel(mdib_bl_neg_8, correct = 0, cor = "poly"))
-dev.off()
-
-result_poly_minres$ncomp == 1
-
-sum(result_poly_minres$pc.values > result_poly_minres$pc.sim)  == 1
-
-sum(result_poly_minres$pc.values > result_poly_minres$pc.simr) == 1
-
-# ---------------------------------------------------------------------------- #
-# Run EFA based on 8 reduced negative bias items using "MLM" estimator ----
-# ---------------------------------------------------------------------------- #
-
-# Based on scree plot, considered retaining 1 to 3 factors, but parallel analysis 
-# suggests a smaller number (up to 1, though looking at +/- 1 is recommended; Lim 
-# & Jahng, 2019). Thus, consider 1 or 2.
-
-# Note: No warnings or Heywood cases
-
-set.seed(1234)
-fit_oblimin_mlm <- efa(data = mdib_bl_neg_8, nfactors = 1:2, rotation = "oblimin", 
-                       estimator = "MLM")
-set.seed(1234)
-fit_geomin_mlm  <- efa(data = mdib_bl_neg_8, nfactors = 1:2, rotation = "geomin",  
-                       estimator = "MLM")
-set.seed(1234)
-fit_promax_mlm  <- efa(data = mdib_bl_neg_8, nfactors = 1:2, rotation = "promax",  
-                       estimator = "MLM")
-
-# Export basic results and details to TXT and loadings to CSV
-
-export_efa_res(fit_oblimin_mlm, neg_items_8_path, "oblimin_mlm")
-export_efa_res(fit_geomin_mlm,  neg_items_8_path, "geomin_mlm")
-export_efa_res(fit_promax_mlm,  neg_items_8_path, "promax_mlm")
-
-# ---------------------------------------------------------------------------- #
-# Run EFA based on 8 reduced negative bias items using "WLSMV" estimator ----
-# ---------------------------------------------------------------------------- #
-
-# Convert columns to ordered factors
-
-mdib_bl_neg_8_ord <- as.data.frame(lapply(mdib_bl_neg_8, factor, levels = 0:4, ordered = TRUE))
-
-# Consider 1 or 2 factors, as determined above
-
-# Note: No warnings or Heywood cases
-
-set.seed(1234)
-fit_oblimin_wlsmv <- efa(data = mdib_bl_neg_8_ord, nfactors = 1:2, rotation = "oblimin", 
-                         estimator = "WLSMV")
-set.seed(1234)
-fit_geomin_wlsmv  <- efa(data = mdib_bl_neg_8_ord, nfactors = 1:2, rotation = "geomin",  
-                         estimator = "WLSMV")
-set.seed(1234)
-fit_promax_wlsmv  <- efa(data = mdib_bl_neg_8_ord, nfactors = 1:2, rotation = "promax",  
-                         estimator = "WLSMV")
-
-# Export basic results and details to TXT and loadings to CSV
-
-export_efa_res(fit_oblimin_wlsmv, neg_items_8_path, "oblimin_wlsmv")
-export_efa_res(fit_geomin_wlsmv,  neg_items_8_path, "geomin_wlsmv")
-export_efa_res(fit_promax_wlsmv,  neg_items_8_path, "promax_wlsmv")
-
-
-# ---------------------------------------------------------------------------- #
-# Export 8 reduced negative bias items for internal consistency analyses ----
-# ---------------------------------------------------------------------------- #
-
-save(mdib_bl_neg_8,     file = "~/data/further_clean/mdib_bl_neg_8.Rdata")
-save(mdib_bl_neg_8_ord, file = "~/data/further_clean/mdib_bl_neg_8_ord.Rdata")
-#8-item scale are the best 
