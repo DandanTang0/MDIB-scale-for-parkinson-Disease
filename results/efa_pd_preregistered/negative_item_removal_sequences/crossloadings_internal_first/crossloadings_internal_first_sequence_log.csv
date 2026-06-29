@@ -1,4 +1,0 @@
-"step","removed_item","retained_n_items","retained_items"
-1,"mdib_neg_int_email_6b",11,"mdib_neg_ext_server_2a, mdib_neg_ext_reminder_3c, mdib_neg_ext_neighbor_5a, mdib_neg_ext_exercise_7a, mdib_neg_ext_walk_9c, mdib_neg_ext_job_10a, mdib_neg_ext_stumble_11c, mdib_neg_int_remember_1b, mdib_neg_int_cleaning_4c, mdib_neg_int_medication_8b, mdib_neg_int_cough_12b"
-2,"mdib_neg_ext_server_2a",10,"mdib_neg_ext_reminder_3c, mdib_neg_ext_neighbor_5a, mdib_neg_ext_exercise_7a, mdib_neg_ext_walk_9c, mdib_neg_ext_job_10a, mdib_neg_ext_stumble_11c, mdib_neg_int_remember_1b, mdib_neg_int_cleaning_4c, mdib_neg_int_medication_8b, mdib_neg_int_cough_12b"
-3,"mdib_neg_int_remember_1b",9,"mdib_neg_ext_reminder_3c, mdib_neg_ext_neighbor_5a, mdib_neg_ext_exercise_7a, mdib_neg_ext_walk_9c, mdib_neg_ext_job_10a, mdib_neg_ext_stumble_11c, mdib_neg_int_cleaning_4c, mdib_neg_int_medication_8b, mdib_neg_int_cough_12b"
