@@ -1,0 +1,254 @@
+This is lavaan 0.6-19 -- running exploratory factor analysis
+
+  Estimator                                       DWLS
+  Rotation method                      OBLIMIN OBLIQUE
+  Oblimin gamma                                      0
+  Rotation algorithm (rstarts)                GPA (30)
+  Standardized metric                             TRUE
+  Row weights                                     None
+
+  Number of observations                            82
+
+Overview models:
+                chisq df pvalue   cfi rmsea
+  nfactors = 1 75.455 35  0.000 0.743 0.221
+  nfactors = 2 40.548 26  0.034 0.837 0.204
+
+Eigenvalues correlation matrix:
+
+     ev1      ev2      ev3      ev4      ev5      ev6      ev7      ev8      ev9     ev10 
+  5.2531   1.2178   0.8538   0.7422   0.6106   0.4573   0.3843   0.2528   0.1828   0.0454 
+
+Number of factors:  1 
+
+Standardized loadings: (* = significant at 1% level)
+
+                               f1       unique.var   communalities
+mdib_neg_ext_server_2a      0.760*           0.423           0.577
+mdib_neg_ext_reminder_3c    0.575*           0.670           0.330
+mdib_neg_ext_neighbor_5a    0.709*           0.497           0.503
+mdib_neg_ext_exercise_7a    0.484*           0.766           0.234
+mdib_neg_ext_walk_9c        0.899*           0.191           0.809
+mdib_neg_ext_job_10a        0.724*           0.476           0.524
+mdib_neg_ext_stumble_11c    0.709*           0.497           0.503
+mdib_neg_int_cleaning_4c    0.715*           0.489           0.511
+mdib_neg_int_medication_8b  0.707*           0.501           0.499
+mdib_neg_int_cough_12b      0.681*           0.536           0.464
+
+                           f1
+Sum of squared loadings 4.954
+Proportion of total     1.000
+Proportion var          0.495
+Cumulative var          0.495
+
+Standard errors standardized loadings:
+
+                              f1
+mdib_neg_ext_server_2a     0.058
+mdib_neg_ext_reminder_3c   0.072
+mdib_neg_ext_neighbor_5a   0.058
+mdib_neg_ext_exercise_7a   0.084
+mdib_neg_ext_walk_9c       0.055
+mdib_neg_ext_job_10a       0.071
+mdib_neg_ext_stumble_11c   0.062
+mdib_neg_int_cleaning_4c   0.053
+mdib_neg_int_medication_8b 0.067
+mdib_neg_int_cough_12b     0.077
+
+Z-statistics standardized loadings:
+
+                               f1
+mdib_neg_ext_server_2a     13.150
+mdib_neg_ext_reminder_3c    7.938
+mdib_neg_ext_neighbor_5a   12.183
+mdib_neg_ext_exercise_7a    5.747
+mdib_neg_ext_walk_9c       16.287
+mdib_neg_ext_job_10a       10.184
+mdib_neg_ext_stumble_11c   11.371
+mdib_neg_int_cleaning_4c   13.612
+mdib_neg_int_medication_8b 10.530
+mdib_neg_int_cough_12b      8.806
+
+P-values standardized loadings:
+
+                           f1
+mdib_neg_ext_server_2a      0
+mdib_neg_ext_reminder_3c    0
+mdib_neg_ext_neighbor_5a    0
+mdib_neg_ext_exercise_7a    0
+mdib_neg_ext_walk_9c        0
+mdib_neg_ext_job_10a        0
+mdib_neg_ext_stumble_11c    0
+mdib_neg_int_cleaning_4c    0
+mdib_neg_int_medication_8b  0
+mdib_neg_int_cough_12b      0
+
+Standard errors unique variances:
+
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     0.088                      0.083                      0.083 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     0.081                      0.099                      0.103 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_cleaning_4c mdib_neg_int_medication_8b 
+                     0.089                      0.075                      0.095 
+    mdib_neg_int_cough_12b 
+                     0.105 
+
+Z-statistics unique variances:
+
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     4.816                      8.052                      6.026 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     9.400                      1.928                      4.632 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_cleaning_4c mdib_neg_int_medication_8b 
+                     5.612                      6.503                      5.277 
+    mdib_neg_int_cough_12b 
+                     5.088 
+
+P-values unique variances:
+
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     0.000                      0.000                      0.000 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     0.000                      0.054                      0.000 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_cleaning_4c mdib_neg_int_medication_8b 
+                     0.000                      0.000                      0.000 
+    mdib_neg_int_cough_12b 
+                     0.000 
+
+Standard errors factor correlations:
+
+   f1
+f1  0
+
+Z-statistics factor correlations:
+
+       f1
+f1      .
+
+P-values factor correlations:
+
+       f1
+f1      .
+
+Number of factors:  2 
+
+Standardized loadings: (* = significant at 1% level)
+
+                               f1      f2       unique.var   communalities
+mdib_neg_ext_server_2a          .   0.579*           0.371           0.629
+mdib_neg_ext_reminder_3c    0.770*      .            0.530           0.470
+mdib_neg_ext_neighbor_5a    0.712*                   0.444           0.556
+mdib_neg_ext_exercise_7a    0.437                    0.758           0.242
+mdib_neg_ext_walk_9c        0.791*      .            0.161           0.839
+mdib_neg_ext_job_10a        0.779*                   0.401           0.599
+mdib_neg_ext_stumble_11c    0.759*                   0.442           0.558
+mdib_neg_int_cleaning_4c            0.839*           0.289           0.711
+mdib_neg_int_medication_8b      .   0.602*           0.460           0.540
+mdib_neg_int_cough_12b              0.872*           0.319           0.681
+
+                              f1    f2 total
+Sum of sq (obliq) loadings 3.412 2.413 5.825
+Proportion of total        0.586 0.414 1.000
+Proportion var             0.341 0.241 0.582
+Cumulative var             0.341 0.582 0.582
+
+Factor correlations: (* = significant at 1% level)
+
+       f1      f2 
+f1   1.00         
+f2   0.63*   1.00 
+
+Standard errors standardized loadings:
+
+                              f1    f2
+mdib_neg_ext_server_2a     0.130 0.146
+mdib_neg_ext_reminder_3c   0.109 0.124
+mdib_neg_ext_neighbor_5a   0.090 0.109
+mdib_neg_ext_exercise_7a   0.176 0.189
+mdib_neg_ext_walk_9c       0.125 0.122
+mdib_neg_ext_job_10a       0.091 0.098
+mdib_neg_ext_stumble_11c   0.098 0.121
+mdib_neg_int_cleaning_4c   0.109 0.122
+mdib_neg_int_medication_8b 0.120 0.124
+mdib_neg_int_cough_12b     0.104 0.112
+
+Z-statistics standardized loadings:
+
+                               f1     f2
+mdib_neg_ext_server_2a      2.220  3.967
+mdib_neg_ext_reminder_3c    7.070 -1.212
+mdib_neg_ext_neighbor_5a    7.955  0.472
+mdib_neg_ext_exercise_7a    2.482  0.423
+mdib_neg_ext_walk_9c        6.322  1.481
+mdib_neg_ext_job_10a        8.520 -0.082
+mdib_neg_ext_stumble_11c    7.713 -0.157
+mdib_neg_int_cleaning_4c    0.057  6.883
+mdib_neg_int_medication_8b  1.577  4.838
+mdib_neg_int_cough_12b     -0.747  7.801
+
+P-values standardized loadings:
+
+                              f1    f2
+mdib_neg_ext_server_2a     0.026 0.000
+mdib_neg_ext_reminder_3c   0.000 0.226
+mdib_neg_ext_neighbor_5a   0.000 0.637
+mdib_neg_ext_exercise_7a   0.013 0.673
+mdib_neg_ext_walk_9c       0.000 0.139
+mdib_neg_ext_job_10a       0.000 0.935
+mdib_neg_ext_stumble_11c   0.000 0.875
+mdib_neg_int_cleaning_4c   0.955 0.000
+mdib_neg_int_medication_8b 0.115 0.000
+mdib_neg_int_cough_12b     0.455 0.000
+
+Standard errors unique variances:
+
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     0.102                      0.103                      0.080 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     0.087                      0.108                      0.108 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_cleaning_4c mdib_neg_int_medication_8b 
+                     0.088                      0.116                      0.101 
+    mdib_neg_int_cough_12b 
+                     0.132 
+
+Z-statistics unique variances:
+
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     3.624                      5.132                      5.531 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     8.764                      1.489                      3.697 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_cleaning_4c mdib_neg_int_medication_8b 
+                     4.996                      2.485                      4.540 
+    mdib_neg_int_cough_12b 
+                     2.413 
+
+P-values unique variances:
+
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     0.000                      0.000                      0.000 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     0.000                      0.137                      0.000 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_cleaning_4c mdib_neg_int_medication_8b 
+                     0.000                      0.013                      0.000 
+    mdib_neg_int_cough_12b 
+                     0.016 
+
+Standard errors factor correlations:
+
+      f1    f2
+f1 0.000      
+f2 0.075 0.000
+
+Z-statistics factor correlations:
+
+       f1     f2
+f1      .       
+f2  8.341      .
+
+P-values factor correlations:
+
+       f1     f2
+f1      .       
+f2      0      .
+
