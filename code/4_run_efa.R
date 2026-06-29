@@ -35,7 +35,7 @@
 # - The 36-item EFAs did not yield a clear, stable, theoretically interpretable
 #   structure beyond a broad benign-versus-negative distinction. Therefore, the
 #   analyses proceeded to the 12 theorized negative items, consistent with the
-#   analysis plan and the HD workflow.
+#   analysis plan and the theorized negative-bias item set.
 # - For the 12 negative items, polychoric parallel analysis suggested a one-
 #   component upper bound. Following the preregistered +/- 1 approach, 1- and
 #   2-factor WLSMV EFA solutions were examined.
@@ -158,23 +158,28 @@ plot_item_hists <- function(df, path, filename_stem, n_per_page = 6) {
 }
 
 # Convert MDIB items to ordered factors for categorical analyses.
-# Missing response categories are dropped separately for each item. Observed
-# responses are not collapsed, recoded, or otherwise altered.
-make_ordered_mdib <- function(df) {
-  df_ord <- as.data.frame(lapply(df, function(x) {
-    factor(x, levels = sort(unique(x[!is.na(x)])), ordered = TRUE)
-  }))
+# Unobserved response categories are not artificially added. Because Script 2
+# restricts the EFA sample to complete baseline MDIB data, this function should
+# receive item data with no missing responses.
 
+make_ordered_mdib <- function(df) {
+  stopifnot(sum(is.na(df)) == 0)
+  stopifnot(sum(df == 99, na.rm = TRUE) == 0)
+  
+  df_ord <- as.data.frame(lapply(df, function(x) {
+    factor(x, levels = sort(unique(x)), ordered = TRUE)
+  }))
+  
   stopifnot(ncol(df_ord) == ncol(df))
   stopifnot(all(names(df_ord) == names(df)))
-
+  
   df_ord
 }
 
 # Run parallel analysis based on principal components and polychoric correlations.
 # Important: psych::fa.parallel prints ncomp, but for this project we do not base
 # the decision on the printed ncomp value. Instead, following prior guidance for
-# the HD analyses, we explicitly count how many observed principal-component
+# related analyses, we explicitly count how many observed principal-component
 # eigenvalues exceed the mean simulated or resampled eigenvalues.
 #
 # Expected warnings:
@@ -417,7 +422,7 @@ mdib_bl <- mdib_pd_dat[
   mdib_items
 ]
 
-# Order columns by meaning and then domain, as in the HD paper.
+# Order columns by meaning and then domain, using the predefined item map.
 mdib_item_map <- mdib_item_map[order(mdib_item_map$meaning, mdib_item_map$domain), ]
 
 mdib_bl <- mdib_bl[
@@ -426,6 +431,21 @@ mdib_bl <- mdib_bl[
 
 stopifnot(ncol(mdib_bl) == 36)
 stopifnot(all(names(mdib_bl) == mdib_item_map$items_rename))
+
+# Confirm that the imported baseline MDIB item data are complete, as required
+# by the preregistered EFA analysis sample. Therefore, no item-level imputation
+# is performed in this script.
+
+# Confirm the expected EFA analysis sample size for the current cleaned PD data
+# export. Update expected_efa_n only if the cleaned data export or preregistered
+# exclusion rule changes after team review.
+expected_efa_n <- 82
+
+stopifnot(nrow(mdib_bl) == length(unique(mdib_pd_dat$record_id)))
+stopifnot(sum(is.na(mdib_bl)) == 0)
+stopifnot(sum(mdib_bl == 99, na.rm = TRUE) == 0)
+stopifnot(nrow(mdib_bl) == expected_efa_n)
+
 
 # ---------------------------------------------------------------------------- #
 # Define output paths ----
@@ -454,12 +474,15 @@ plot_item_hists(
 )
 
 # Result note:
-# Visual inspection of the 36 item distributions indicated substantial skewness.
-# The negative items showed especially pronounced floor effects, with most
-# responses concentrated in the lower response categories and sparse responses in
-# the upper categories. Therefore, consistent with the preregistered analysis
-# plan, all MDIB items are treated as ordered categorical indicators in the
-# parallel analyses and EFAs below.
+#
+# Visual inspection of the updated item distributions continued to support the
+# ordered-categorical EFA workflow. The negative items showed pronounced floor
+# effects, with an average of approximately 78% of responses in categories 0 or 1
+# and only approximately 10% of responses in categories 3 or 4. In contrast, the
+# benign items showed more responses in the middle-to-upper categories, with an
+# average of approximately 46% of responses in categories 3 or 4. These
+# distributional patterns support using polychoric correlations in the parallel
+# analyses and WLSMV estimation in the EFAs.
 
 # ---------------------------------------------------------------------------- #
 # Step 2: Parallel analysis for all 36 MDIB items ----
@@ -535,6 +558,13 @@ mdib_bl_neg_12 <- mdib_bl[, grepl("^mdib_neg", names(mdib_bl)), drop = FALSE]
 
 stopifnot(ncol(mdib_bl_neg_12) == 12)
 
+# The 12 negative items are a subset of the complete baseline MDIB item data and
+# should therefore also have no missing item-level responses.
+stopifnot(sum(is.na(mdib_bl_neg_12)) == 0)
+stopifnot(sum(mdib_bl_neg_12 == 99, na.rm = TRUE) == 0)
+stopifnot(nrow(mdib_bl_neg_12) == expected_efa_n)
+
+
 neg_12_path <- file.path(efa_path, "negative_12_items")
 neg_12_dist_path <- file.path(neg_12_path, "item_distributions")
 
@@ -608,6 +638,14 @@ fits_neg_12 <- run_wlsmv_efas(
   filename_stem = "negative_12_items"
 )
 
+# Save the complete baseline 12-negative-item data used in the EFA. These
+# objects should reflect the preregistered analysis sample restriction.
+
+stopifnot(nrow(mdib_bl_neg_12) == expected_efa_n)
+stopifnot(sum(is.na(mdib_bl_neg_12)) == 0)
+stopifnot(sum(mdib_bl_neg_12 == 99, na.rm = TRUE) == 0)
+
+
 save(
   mdib_bl_neg_12,
   file = "./data/further_clean/mdib_bl_neg_12_pd.RData"
@@ -619,21 +657,19 @@ save(
 )
 
 # Result note:
-# The 12-item 1-factor solution supported a broad negative bias factor, but
-# absolute fit was poor and mdib_neg_int_remember_1b had very low communality and
-# did not load saliently.
+# The 1-factor solution supported a broad negative bias factor, but absolute
+# fit was poor and mdib_neg_int_remember_1b had very low communality and did
+# not load saliently.
 #
-# The 12-item 2-factor solution improved relative fit and was more consistent
-# with the theorized internal/external distinction. Most external threat items
-# loaded on one factor and most internal threat items loaded on the other. However,
-# absolute fit remained poor, the factor correlation was high, and three item-
-# level concerns remained:
-# - mdib_neg_int_remember_1b did not load saliently on either factor.
-# - mdib_neg_ext_server_2a loaded primarily with the internal items despite being
-#   theorized as an external item.
-# - mdib_neg_int_email_6b showed a mild cross-loading in some geomin solutions,
-#   although its primary loading was on the internal factor and promax was cleaner.
-
+# The 2-factor solution improved relative fit and was more consistent with the
+# theorized internal/external distinction. Most external threat items loaded on
+# one factor and most internal threat items loaded on the other. However,
+# absolute fit remained poor, the factor correlation was high, and key item-level
+# concerns remained. mdib_neg_int_remember_1b did not load saliently,
+# mdib_neg_ext_server_2a loaded primarily with the internal items despite being
+# theorized as an external item, and mdib_neg_int_email_6b showed a mild
+# cross-loading in the geomin solution, although its primary loading was on the
+# internal factor and the oblimin/promax solutions were cleaner.
 # ---------------------------------------------------------------------------- #
 # Step 7: Strategically chosen item-removal sequences for negative items ----
 # ---------------------------------------------------------------------------- #
@@ -642,7 +678,8 @@ save(
 # that can be described in the paper:
 #
 # Sequence A: Start with the item that did not load saliently on either factor,
-# then remove items with salient cross-loadings or theory-inconsistent loadings.
+# then remove the internal item with a mild cross-loading and the external item
+# with a theory-inconsistent loading.
 #
 # Sequence B: Start with the external item that loaded with the internal factor,
 # then remove the internal item with a mild cross-loading, and then remove the
@@ -659,7 +696,7 @@ save(
 # the internal factor and was cleaner under promax rotation.
 
 removal_sequences <- list(
-  nonsalient_first_then_crossloadings = c(
+  nonsalient_then_internal_then_external = c(
     "mdib_neg_int_remember_1b",
     "mdib_neg_int_email_6b",
     "mdib_neg_ext_server_2a"
@@ -731,10 +768,11 @@ for (sequence_name in names(removal_sequences)) {
 }
 
 # Final interpretation note:
-# Based on the current PD EFA results, the most balanced reduced-item candidate is
-# the 10-item solution that removes mdib_neg_int_remember_1b and
-# mdib_neg_ext_server_2a but retains mdib_neg_int_email_6b. This solution removes
-# the two clearest problematic items, preserves four internal items, and yields a
+# Based on the current PD EFA results, the 10-item solution that removes
+# mdib_neg_int_remember_1b and mdib_neg_ext_server_2a but retains
+# mdib_neg_int_email_6b appears to be the
+# most balanced reduced-item candidate. This solution removes the two clearest
+# problematic items, preserves four internal items, and yields a
 # clear internal/external two-factor pattern. The 9-item solution that also removes
 # mdib_neg_int_email_6b can be retained as a stricter sensitivity or alternative
 # solution because it gives the cleanest loading pattern but leaves only three
@@ -742,8 +780,7 @@ for (sequence_name in names(removal_sequences)) {
 #
 # These comments document the decision logic for discussion with the team. The
 # final retained item set should be decided after reviewing the EFA notes, factor
-# loading tables, model fit, theoretical coverage, and consistency with the HD
-# sample.
+# loading tables, model fit, item content, and theoretical coverage.
 
 # ---------------------------------------------------------------------------- #
 # End of script ----
