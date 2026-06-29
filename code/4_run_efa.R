@@ -26,6 +26,9 @@
 # - MLM EFA models,
 # - HD-specific comments and decision logic.
 #
+# Output folders and file stems are intentionally abbreviated to avoid creating
+# very long file paths in the results directory.
+#
 # Result-informed notes from the current PD run:
 # - Visual inspection showed substantial skewness, especially for the 12 negative
 #   items, which showed pronounced floor effects and sparse upper-category
@@ -80,6 +83,22 @@ set.seed(1234)
 # Create directory if it does not already exist.
 make_dir <- function(path) {
   dir.create(path, recursive = TRUE, showWarnings = FALSE)
+}
+
+# Short labels used only in output folder/file names. These keep generated paths
+# short enough for collaborators to clone the repository across operating systems.
+short_item_name <- function(item) {
+  item_map <- c(
+    mdib_neg_int_remember_1b = "1b",
+    mdib_neg_ext_server_2a   = "2a",
+    mdib_neg_int_email_6b    = "6b"
+  )
+
+  if (item %in% names(item_map)) {
+    unname(item_map[[item]])
+  } else {
+    item
+  }
 }
 
 # Export lavaan EFA summaries, detailed output, loadings, and the fitted object.
@@ -328,14 +347,14 @@ run_removal_sequence <- function(df, sequence_name, removal_order, base_path) {
 
     current_df <- current_df[, names(current_df) != item_to_remove, drop = FALSE]
 
-    step_name <- paste0("step_", sprintf("%02d", step), "_minus_", item_to_remove)
+    step_name <- paste0("s", sprintf("%02d", step), "_minus_", short_item_name(item_to_remove))
     step_path <- file.path(sequence_path, step_name)
 
     # Parallel analysis is rerun after each item removal because removing one
     # item can change the observed and simulated eigenvalue comparison.
     pa_minres <- run_pa_poly(
       current_df,
-      path = file.path(step_path, "parallel_analysis"),
+      path = file.path(step_path, "pa"),
       filename_stem = step_name,
       fm = "minres",
       n_iter = 100
@@ -343,7 +362,7 @@ run_removal_sequence <- function(df, sequence_name, removal_order, base_path) {
 
     pa_ml <- run_pa_poly(
       current_df,
-      path = file.path(step_path, "parallel_analysis"),
+      path = file.path(step_path, "pa"),
       filename_stem = step_name,
       fm = "ml",
       n_iter = 100
@@ -352,7 +371,7 @@ run_removal_sequence <- function(df, sequence_name, removal_order, base_path) {
     pa_decision <- summarize_pa_decision(
       pa_minres,
       pa_ml,
-      path = file.path(step_path, "parallel_analysis"),
+      path = file.path(step_path, "pa"),
       filename_stem = step_name
     )
 
@@ -451,26 +470,26 @@ stopifnot(nrow(mdib_bl) == expected_efa_n)
 # Define output paths ----
 # ---------------------------------------------------------------------------- #
 
-efa_path <- "./results/efa_pd_preregistered/"
+efa_path <- "./results/efa_pd/"
 make_dir(efa_path)
 
 # ---------------------------------------------------------------------------- #
 # Step 1: Inspect item distributions ----
 # ---------------------------------------------------------------------------- #
 
-dist_path <- file.path(efa_path, "item_distributions")
+dist_path <- file.path(efa_path, "dist")
 make_dir(dist_path)
 
 export_item_distributions(
   df = mdib_bl,
   path = dist_path,
-  filename_stem = "mdib_bl_all_36"
+  filename_stem = "all36"
 )
 
 plot_item_hists(
   df = mdib_bl,
   path = dist_path,
-  filename_stem = "mdib_bl_all_36"
+  filename_stem = "all36"
 )
 
 # Result note:
@@ -488,13 +507,13 @@ plot_item_hists(
 # Step 2: Parallel analysis for all 36 MDIB items ----
 # ---------------------------------------------------------------------------- #
 
-all_items_path <- file.path(efa_path, "all_36_items")
-all_pa_path <- file.path(all_items_path, "parallel_analysis")
+all_items_path <- file.path(efa_path, "all36")
+all_pa_path <- file.path(all_items_path, "pa")
 
 pa_all_minres <- run_pa_poly(
   df = mdib_bl,
   path = all_pa_path,
-  filename_stem = "all_36_items",
+  filename_stem = "all36",
   fm = "minres",
   n_iter = 100
 )
@@ -502,7 +521,7 @@ pa_all_minres <- run_pa_poly(
 pa_all_ml <- run_pa_poly(
   df = mdib_bl,
   path = all_pa_path,
-  filename_stem = "all_36_items",
+  filename_stem = "all36",
   fm = "ml",
   n_iter = 100
 )
@@ -511,7 +530,7 @@ pa_all_decision <- summarize_pa_decision(
   pa_minres = pa_all_minres,
   pa_ml = pa_all_ml,
   path = all_pa_path,
-  filename_stem = "all_36_items"
+  filename_stem = "all36"
 )
 
 # Result note:
@@ -537,7 +556,7 @@ fits_all_36 <- run_wlsmv_efas(
   df_ord = mdib_bl_ord,
   nfactors = pa_all_decision$candidate_nfactors,
   path = file.path(all_items_path, "efa"),
-  filename_stem = "all_36_items"
+  filename_stem = "all36"
 )
 
 # Result note:
@@ -565,19 +584,19 @@ stopifnot(sum(mdib_bl_neg_12 == 99, na.rm = TRUE) == 0)
 stopifnot(nrow(mdib_bl_neg_12) == expected_efa_n)
 
 
-neg_12_path <- file.path(efa_path, "negative_12_items")
-neg_12_dist_path <- file.path(neg_12_path, "item_distributions")
+neg_12_path <- file.path(efa_path, "neg12")
+neg_12_dist_path <- file.path(neg_12_path, "dist")
 
 export_item_distributions(
   df = mdib_bl_neg_12,
   path = neg_12_dist_path,
-  filename_stem = "negative_12_items"
+  filename_stem = "neg12"
 )
 
 plot_item_hists(
   df = mdib_bl_neg_12,
   path = neg_12_dist_path,
-  filename_stem = "negative_12_items"
+  filename_stem = "neg12"
 )
 
 # Result note:
@@ -589,12 +608,12 @@ plot_item_hists(
 # Step 5: Parallel analysis for the 12 negative bias items ----
 # ---------------------------------------------------------------------------- #
 
-neg_12_pa_path <- file.path(neg_12_path, "parallel_analysis")
+neg_12_pa_path <- file.path(neg_12_path, "pa")
 
 pa_neg_12_minres <- run_pa_poly(
   df = mdib_bl_neg_12,
   path = neg_12_pa_path,
-  filename_stem = "negative_12_items",
+  filename_stem = "neg12",
   fm = "minres",
   n_iter = 100
 )
@@ -602,7 +621,7 @@ pa_neg_12_minres <- run_pa_poly(
 pa_neg_12_ml <- run_pa_poly(
   df = mdib_bl_neg_12,
   path = neg_12_pa_path,
-  filename_stem = "negative_12_items",
+  filename_stem = "neg12",
   fm = "ml",
   n_iter = 100
 )
@@ -611,7 +630,7 @@ pa_neg_12_decision <- summarize_pa_decision(
   pa_minres = pa_neg_12_minres,
   pa_ml = pa_neg_12_ml,
   path = neg_12_pa_path,
-  filename_stem = "negative_12_items"
+  filename_stem = "neg12"
 )
 
 # Result note:
@@ -635,7 +654,7 @@ fits_neg_12 <- run_wlsmv_efas(
   df_ord = mdib_bl_neg_12_ord,
   nfactors = pa_neg_12_decision$candidate_nfactors,
   path = file.path(neg_12_path, "efa"),
-  filename_stem = "negative_12_items"
+  filename_stem = "neg12"
 )
 
 # Save the complete baseline 12-negative-item data used in the EFA. These
@@ -696,24 +715,24 @@ save(
 # the internal factor and was cleaner under promax rotation.
 
 removal_sequences <- list(
-  nonsalient_then_internal_then_external = c(
+  ns_int_ext = c(
     "mdib_neg_int_remember_1b",
     "mdib_neg_int_email_6b",
     "mdib_neg_ext_server_2a"
   ),
-  crossloadings_external_first = c(
+  ext_first = c(
     "mdib_neg_ext_server_2a",
     "mdib_neg_int_email_6b",
     "mdib_neg_int_remember_1b"
   ),
-  crossloadings_internal_first = c(
+  int_first = c(
     "mdib_neg_int_email_6b",
     "mdib_neg_ext_server_2a",
     "mdib_neg_int_remember_1b"
   )
 )
 
-removal_path <- file.path(efa_path, "negative_item_removal_sequences")
+removal_path <- file.path(efa_path, "rm_seq")
 
 for (sequence_name in names(removal_sequences)) {
   run_removal_sequence(
@@ -749,14 +768,14 @@ for (sequence_name in names(removal_sequences)) {
 # also remove mdib_neg_int_email_6b.
 
 removal_sequences <- list(
-  nonsalient_then_external_then_internal = c(
+  focused = c(
     "mdib_neg_int_remember_1b",
     "mdib_neg_ext_server_2a",
     "mdib_neg_int_email_6b"
   )
 )
 
-removal_path <- file.path(efa_path, "negative_item_removal_sequences2")
+removal_path <- file.path(efa_path, "rm_focus")
 
 for (sequence_name in names(removal_sequences)) {
   run_removal_sequence(
