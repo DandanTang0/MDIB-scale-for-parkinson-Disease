@@ -34,7 +34,7 @@ load("./data/further_clean/mdib_pd_dat.RData")
 bl <- "baseline_arm_1"
 
 stopifnot(exists("mdib_pd_dat"))
-stopifnot(length(unique(mdib_pd_dat$record_id)) == 85)
+stopifnot(length(unique(mdib_pd_dat$record_id)) == 82)
 
 # ---------------------------------------------------------------------------- #
 # Extract baseline demographic data ----
@@ -66,11 +66,11 @@ dem_dat <- mdib_pd_dat[
   c(index_cols, dem_cols)
 ]
 
-# Confirm that the demographics table is based on the 85 participants in the
+# Confirm that the demographics table is based on the 82 participants in the
 # baseline PD analysis sample.
 
-stopifnot(nrow(dem_dat) == 85)
-stopifnot(length(unique(dem_dat$record_id)) == 85)
+stopifnot(nrow(dem_dat) == 82)
+stopifnot(length(unique(dem_dat$record_id)) == 82)
 
 # Store a copy of the raw baseline demographic data before cleaning.
 
@@ -83,13 +83,13 @@ dem_raw <- dem_dat
 # Confirm missingness and observed range for age in the baseline PD analysis
 # sample.
 
-stopifnot(sum(is.na(dem_dat$age)) == 5)
+stopifnot(sum(is.na(dem_dat$age)) == 2)
 stopifnot(all(range(dem_dat$age, na.rm = TRUE) == c(40, 84)))
 
 # Confirm missingness and observed range for age at PD diagnosis in the baseline
 # PD analysis sample.
 
-stopifnot(sum(is.na(dem_dat$age_diagnosis_pd)) == 5)
+stopifnot(sum(is.na(dem_dat$age_diagnosis_pd)) == 2)
 stopifnot(all(range(dem_dat$age_diagnosis_pd, na.rm = TRUE) == c(35, 79)))
 
 # ---------------------------------------------------------------------------- #
@@ -176,7 +176,7 @@ stopifnot(sum(dem_dat$race_coll == "White", na.rm = TRUE) == 75)
 stopifnot(sum(dem_dat$race_coll == "More than one race", na.rm = TRUE) == 3)
 stopifnot(sum(dem_dat$race_coll == "Other", na.rm = TRUE) == 0)
 stopifnot(sum(dem_dat$race_coll == "Prefer not to answer", na.rm = TRUE) == 1)
-stopifnot(sum(dem_dat$race_coll == "Missing", na.rm = TRUE) == 5)
+stopifnot(sum(dem_dat$race_coll == "Missing", na.rm = TRUE) == 2)
 
 table(dem_dat$race_coll, useNA = "ifany")
 
@@ -306,12 +306,12 @@ dem_dat[categorical_dem_vars] <- lapply(
   add_missing_level
 )
 
-# Confirm that each categorical demographic variable has 85 observations after
+# Confirm that each categorical demographic variable has 82 observations after
 # missing values are recoded as "Missing".
 
 stopifnot(all(sapply(
   dem_dat[categorical_dem_vars],
-  function(x) sum(table(x, useNA = "ifany")) == 85
+  function(x) sum(table(x, useNA = "ifany")) == 82
 )))
 
 # Confirm that no categorical demographic variable has remaining NA values.
@@ -350,7 +350,7 @@ dem_dat$country[is.na(dem_dat$country) | dem_dat$country == ""] <- "Missing"
 
 dem_dat$country <- factor(dem_dat$country)
 
-stopifnot(sum(table(dem_dat$country, useNA = "ifany")) == 85)
+stopifnot(sum(table(dem_dat$country, useNA = "ifany")) == 82)
 stopifnot(sum(is.na(dem_dat$country)) == 0)
 
 table(dem_dat$country, useNA = "ifany")
@@ -385,7 +385,7 @@ n_study_awareness_selected <- rowSums(
 # Confirm the number of participants who selected no source or more than one
 # source.
 
-stopifnot(sum(n_study_awareness_selected == 0) == 5)
+stopifnot(sum(n_study_awareness_selected == 0) == 2)
 stopifnot(sum(n_study_awareness_selected > 1) == 4)
 stopifnot(max(n_study_awareness_selected, na.rm = TRUE) == 2)
 
@@ -407,9 +407,9 @@ dem_dat$study_awareness <- factor(
   levels = c(study_awareness_labels, "More than one source", "Missing")
 )
 
-# Confirm that the cleaned study-awareness variable covers all 85 participants.
+# Confirm that the cleaned study-awareness variable covers all 82 participants.
 
-stopifnot(sum(table(dem_dat$study_awareness, useNA = "ifany")) == 85)
+stopifnot(sum(table(dem_dat$study_awareness, useNA = "ifany")) == 82)
 stopifnot(sum(is.na(dem_dat$study_awareness)) == 0)
 
 # Inspect cleaned study-awareness distribution.
@@ -438,9 +438,9 @@ dem_dat$survey_help <- factor(
   levels = c("No", "Yes", "Prefer not to answer", "Missing")
 )
 
-# Confirm that the cleaned survey-help variable covers all 85 participants.
+# Confirm that the cleaned survey-help variable covers all 82 participants.
 
-stopifnot(sum(table(dem_dat$survey_help, useNA = "ifany")) == 85)
+stopifnot(sum(table(dem_dat$survey_help, useNA = "ifany")) == 82)
 stopifnot(sum(is.na(dem_dat$survey_help)) == 0)
 
 # Inspect cleaned survey-help distribution.
@@ -690,6 +690,8 @@ if (dem_tbl_orientation == "p") {
 }
 
 print(doc, target = paste0(dem_path, "dem_tbl.docx"))
+
+
 
 
 
