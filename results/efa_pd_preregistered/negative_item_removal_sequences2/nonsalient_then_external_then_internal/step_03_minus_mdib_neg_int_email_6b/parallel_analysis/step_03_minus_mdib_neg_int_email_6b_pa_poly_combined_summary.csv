@@ -1,0 +1,5 @@
+"filename_stem","fm","n_iter","threshold","n_components"
+"step_03_minus_mdib_neg_int_email_6b","minres",100,"random_data_mean",1
+"step_03_minus_mdib_neg_int_email_6b","minres",100,"resampled_data_mean",1
+"step_03_minus_mdib_neg_int_email_6b","ml",100,"random_data_mean",1
+"step_03_minus_mdib_neg_int_email_6b","ml",100,"resampled_data_mean",1
