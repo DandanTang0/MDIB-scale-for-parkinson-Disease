@@ -1,0 +1,67 @@
+Number of Scale Scores Missing Due to 'Prefer Not to Answer' for All Items: 
+
+mdib_neg_9_int_m: 0
+< table of extent 0 >
+
+ ----- 
+
+mdib_neg_9_ext_m: 0
+< table of extent 0 >
+
+ ----- 
+
+bbsiq_neg_int_m: 0
+< table of extent 0 >
+
+ ----- 
+
+bbsiq_neg_ext_m: 0
+< table of extent 0 >
+
+ ----- 
+
+asi_m: 0
+< table of extent 0 >
+
+ ----- 
+
+asi_red_phy_m: 0
+< table of extent 0 >
+
+ ----- 
+
+asi_red_cog_m: 0
+< table of extent 0 >
+
+ ----- 
+
+asi_red_soc_m: 0
+< table of extent 0 >
+
+ ----- 
+
+bfne2_8_m: 0
+< table of extent 0 >
+
+ ----- 
+
+neuroqol_anx_m: 0
+< table of extent 0 >
+
+ ----- 
+
+sads_m: 0
+< table of extent 0 >
+
+ ----- 
+
+sads_red_m: 0
+< table of extent 0 >
+
+ ----- 
+
+auditc_m: 0
+< table of extent 0 >
+
+ ----- 
+
