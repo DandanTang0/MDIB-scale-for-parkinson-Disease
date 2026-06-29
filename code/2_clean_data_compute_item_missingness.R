@@ -2,8 +2,8 @@
 # Store working directory, load helper functions, and set package-version date ----
 # ---------------------------------------------------------------------------- #
 
-# Before running this script, restart R and set the working directory to the
-# project root folder.
+# Store the project root directory. This object can be used later if the script
+# needs to return to the original working directory after writing outputs.
 
 wd_dir <- getwd()
 
@@ -624,45 +624,71 @@ stopifnot(
 # Identify participants with incomplete MDIB data at baseline ----
 # ---------------------------------------------------------------------------- #
 
-# Identify participants with incomplete baseline MDIB data, defined as having at
-# least one MDIB item coded as 99 ("prefer not to answer") at baseline. These
-# participants are identified here but are not removed from the full dataset until
-# later in the script, after missing-data summaries are computed.
+# The preregistered analysis sample is restricted to participants with complete
+# item-level MDIB data at baseline. Incomplete baseline MDIB data are defined as
+# having at least one baseline MDIB item that is either truly missing (NA) or
+# coded as 99 ("prefer not to answer").
+#
+# Earlier versions of this script only flagged baseline MDIB items coded as 99.
+# That was too narrow because some participants had NA values on baseline MDIB
+# items and were therefore retained in the exported analysis object. The code
+# below flags both sources of incomplete baseline item-level MDIB data.
 
 mdib_items <- c(mdib_dat_items$mdib_neg, mdib_dat_items$mdib_ben)
 
-incompl_mdib_bl_data_ids <- unique(na.omit(
-  mdib_pd_dat[
-    mdib_pd_dat$redcap_event_name == bl &
-      rowSums(mdib_pd_dat[, mdib_items] == 99, na.rm = TRUE) > 0,
-    "record_id"
-  ]
-))
+mdib_bl_item_dat <- mdib_pd_dat[
+  mdib_pd_dat$redcap_event_name == bl,
+  c("record_id", mdib_items)
+]
 
-# Confirm that 3 participants have at least one baseline MDIB item coded as 99.
+mdib_bl_item_mat <- mdib_bl_item_dat[, mdib_items]
 
-stopifnot(length(incompl_mdib_bl_data_ids) == 3)
+rows_incomplete_mdib_bl <- rowSums(
+  is.na(mdib_bl_item_mat) | mdib_bl_item_mat == 99,
+  na.rm = TRUE
+) > 0
 
+incompl_mdib_bl_data_ids <- mdib_bl_item_dat$record_id[
+  rows_incomplete_mdib_bl
+]
 
-# Create a diagnostic table showing the number of baseline MDIB items coded as 99
-# for each participant identified as having incomplete baseline MDIB data.
+# Create a diagnostic table showing why each participant is excluded from the
+# baseline MDIB complete-case analysis sample.
 
 incompl_mdib_bl_tbl <- data.frame(
   record_id = incompl_mdib_bl_data_ids,
-  n_mdib_pna_bl = sapply(incompl_mdib_bl_data_ids, function(id) {
-    sum(
-      mdib_pd_dat[
-        mdib_pd_dat$record_id == id &
-          mdib_pd_dat$redcap_event_name == bl,
-        mdib_items
-      ] == 99,
-      na.rm = TRUE
-    )
-  })
+  n_mdib_na_bl = rowSums(is.na(mdib_bl_item_mat))[rows_incomplete_mdib_bl],
+  n_mdib_pna_bl = rowSums(mdib_bl_item_mat == 99, na.rm = TRUE)[rows_incomplete_mdib_bl],
+  stringsAsFactors = FALSE
 )
 
-#incompl_mdib_bl_tbl
+incompl_mdib_bl_tbl$n_mdib_incomplete_bl <-
+  incompl_mdib_bl_tbl$n_mdib_na_bl + incompl_mdib_bl_tbl$n_mdib_pna_bl
 
+# Confirm that the identified IDs are unique and that every retained participant
+# has complete baseline MDIB item-level data.
+
+stopifnot(length(incompl_mdib_bl_data_ids) == length(unique(incompl_mdib_bl_data_ids)))
+stopifnot(all(incompl_mdib_bl_tbl$n_mdib_incomplete_bl > 0))
+
+# In the current PD data export, the complete-case baseline MDIB restriction
+# removes 6 participants from the 88 participants who started the baseline survey,
+# leaving 82 participants in the analysis sample. If these checks fail after a
+# future data export, inspect incompl_mdib_bl_tbl and update the expected counts.
+
+stopifnot(length(incompl_mdib_bl_data_ids) == 6)
+stopifnot(88 - length(incompl_mdib_bl_data_ids) == 82)
+
+# Export the diagnostic table for reproducibility.
+
+missing_rates_path <- "./results/missingness/"
+dir.create(missing_rates_path, recursive = TRUE, showWarnings = FALSE)
+
+write.csv(
+  incompl_mdib_bl_tbl,
+  file.path(missing_rates_path, "incomplete_mdib_bl_exclusion_tbl.csv"),
+  row.names = FALSE
+)
 
 
 # ---------------------------------------------------------------------------- #
@@ -847,15 +873,25 @@ write.csv(
 # Remove participants with incomplete MDIB data at baseline ----
 # ---------------------------------------------------------------------------- #
 
-# Remove 3 participants with incomplete baseline MDIB data, defined above as
-# having at least one baseline MDIB item coded as 99 ("prefer not to answer").
-# This leaves an analysis sample of 85 participants.
+# Remove participants with incomplete baseline MDIB data, defined above as
+# having at least one baseline MDIB item that is either NA or coded as 99
+# ("prefer not to answer"). This implements the preregistered complete-case
+# baseline MDIB item-level restriction and leaves an analysis sample of 82
+# participants in the current PD data export.
 
 mdib_pd_dat <- mdib_pd_dat[
   !(mdib_pd_dat$record_id %in% incompl_mdib_bl_data_ids),
 ]
 
-stopifnot(length(unique(mdib_pd_dat$record_id)) == 85)
+stopifnot(length(unique(mdib_pd_dat$record_id)) == 82)
+
+mdib_bl_after_exclusion <- mdib_pd_dat[
+  mdib_pd_dat$redcap_event_name == bl,
+  mdib_items
+]
+
+stopifnot(sum(is.na(mdib_bl_after_exclusion)) == 0)
+stopifnot(sum(mdib_bl_after_exclusion == 99, na.rm = TRUE) == 0)
 
 # ---------------------------------------------------------------------------- #
 # Compute rates of item-level missingness in computed scale scores ----
@@ -915,6 +951,8 @@ dir.create("./data/helper", recursive = TRUE, showWarnings = FALSE)
 save(mdib_pd_dat, file = "./data/further_clean/mdib_pd_dat.RData")
 save(mdib_dat_items, file = "./data/helper/mdib_dat_items.RData")
 save(mdib_item_map,  file = "./data/helper/mdib_item_map.RData")
+
+
 
 
 
