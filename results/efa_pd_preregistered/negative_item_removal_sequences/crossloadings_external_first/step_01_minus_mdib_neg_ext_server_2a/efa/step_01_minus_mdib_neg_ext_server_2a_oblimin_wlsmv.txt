@@ -1,0 +1,75 @@
+This is lavaan 0.6-19 -- running exploratory factor analysis
+
+  Estimator                                       DWLS
+  Rotation method                      OBLIMIN OBLIQUE
+  Oblimin gamma                                      0
+  Rotation algorithm (rstarts)                GPA (30)
+  Standardized metric                             TRUE
+  Row weights                                     None
+
+  Number of observations                            82
+
+Overview models:
+                chisq df pvalue   cfi rmsea
+  nfactors = 1 81.766 44  0.000 0.748 0.193
+  nfactors = 2 48.908 34  0.047 0.837 0.177
+
+Eigenvalues correlation matrix:
+
+     ev1      ev2      ev3      ev4      ev5      ev6      ev7      ev8      ev9     ev10 
+  5.3307   1.2202   1.1642   0.8179   0.5931   0.5407   0.4508   0.3412   0.2800   0.2119 
+    ev11 
+  0.0492 
+
+Number of factors:  1 
+
+Standardized loadings: (* = significant at 1% level)
+
+                               f1       unique.var   communalities
+mdib_neg_ext_reminder_3c    0.589*           0.653           0.347
+mdib_neg_ext_neighbor_5a    0.716*           0.488           0.512
+mdib_neg_ext_exercise_7a    0.487*           0.763           0.237
+mdib_neg_ext_walk_9c        0.835*           0.304           0.696
+mdib_neg_ext_job_10a        0.752*           0.434           0.566
+mdib_neg_ext_stumble_11c    0.697*           0.515           0.485
+mdib_neg_int_remember_1b        .*           0.912           0.088
+mdib_neg_int_cleaning_4c    0.696*           0.516           0.484
+mdib_neg_int_email_6b       0.777*           0.396           0.604
+mdib_neg_int_medication_8b  0.734*           0.461           0.539
+mdib_neg_int_cough_12b      0.688*           0.526           0.474
+
+                           f1
+Sum of squared loadings 5.033
+Proportion of total     1.000
+Proportion var          0.458
+Cumulative var          0.458
+
+Number of factors:  2 
+
+Standardized loadings: (* = significant at 1% level)
+
+                               f1      f2       unique.var   communalities
+mdib_neg_ext_reminder_3c    0.777*      .            0.509           0.491
+mdib_neg_ext_neighbor_5a    0.697*                   0.441           0.559
+mdib_neg_ext_exercise_7a    0.415       .            0.757           0.243
+mdib_neg_ext_walk_9c        0.804*                   0.253           0.747
+mdib_neg_ext_job_10a        0.773*                   0.364           0.636
+mdib_neg_ext_stumble_11c    0.753*                   0.455           0.545
+mdib_neg_int_remember_1b        .       .            0.911           0.089
+mdib_neg_int_cleaning_4c            0.783*           0.357           0.643
+mdib_neg_int_email_6b       0.300   0.568*           0.371           0.629
+mdib_neg_int_medication_8b      .   0.669*           0.403           0.597
+mdib_neg_int_cough_12b              0.888*           0.314           0.686
+
+                              f1    f2 total
+Sum of sq (obliq) loadings 3.429 2.437 5.865
+Proportion of total        0.585 0.415 1.000
+Proportion var             0.312 0.222 0.533
+Cumulative var             0.312 0.533 0.533
+
+Factor correlations: (* = significant at 1% level)
+
+       f1      f2 
+f1  1.000         
+f2  0.633*  1.000 
+
