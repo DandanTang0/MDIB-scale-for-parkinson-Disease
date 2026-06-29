@@ -1,0 +1,28 @@
+$nf1
+                              f1
+mdib_neg_ext_server_2a     0.762
+mdib_neg_ext_reminder_3c   0.584
+mdib_neg_ext_neighbor_5a   0.708
+mdib_neg_ext_exercise_7a   0.481
+mdib_neg_ext_walk_9c       0.895
+mdib_neg_ext_job_10a       0.726
+mdib_neg_ext_stumble_11c   0.705
+mdib_neg_int_remember_1b   0.263
+mdib_neg_int_cleaning_4c   0.715
+mdib_neg_int_medication_8b 0.705
+mdib_neg_int_cough_12b     0.681
+
+$nf2
+                               f1     f2
+mdib_neg_ext_server_2a      0.291  0.580
+mdib_neg_ext_reminder_3c    0.793 -0.161
+mdib_neg_ext_neighbor_5a    0.703  0.061
+mdib_neg_ext_exercise_7a    0.430  0.085
+mdib_neg_ext_walk_9c        0.778  0.192
+mdib_neg_ext_job_10a        0.779 -0.004
+mdib_neg_ext_stumble_11c    0.739 -0.001
+mdib_neg_int_remember_1b    0.222  0.066
+mdib_neg_int_cleaning_4c    0.010  0.835
+mdib_neg_int_medication_8b  0.185  0.604
+mdib_neg_int_cough_12b     -0.077  0.873
+
