@@ -1,0 +1,195 @@
+This is lavaan 0.6-19 -- running exploratory factor analysis
+
+  Estimator                                       DWLS
+  Rotation method                       GEOMIN OBLIQUE
+  Geomin epsilon                                 0.001
+  Rotation algorithm (rstarts)                GPA (30)
+  Standardized metric                             TRUE
+  Row weights                                     None
+
+  Number of observations                            82
+
+Overview models:
+                 chisq  df pvalue   cfi rmsea
+  nfactors = 2 687.040 559  0.000 0.863 0.053
+  nfactors = 3 627.895 525  0.001 0.890 0.049
+  nfactors = 4 581.629 492  0.003 0.904 0.047
+
+Eigenvalues correlation matrix:
+
+       ev1        ev2        ev3        ev4        ev5        ev6        ev7        ev8 
+   7.53206    5.30873    2.44500    1.94529    1.81565    1.64037    1.61461    1.37688 
+       ev9       ev10       ev11       ev12       ev13       ev14       ev15       ev16 
+   1.31485    1.20515    1.11509    0.95795    0.87794    0.79850    0.72487    0.68658 
+      ev17       ev18       ev19       ev20       ev21       ev22       ev23       ev24 
+   0.62776    0.61056    0.54162    0.49269    0.44834    0.41781    0.37646    0.32566 
+      ev25       ev26       ev27       ev28       ev29       ev30       ev31       ev32 
+   0.30337    0.22271    0.19518    0.11329    0.10986    0.10595    0.08768    0.01278 
+      ev33       ev34       ev35       ev36 
+  -0.00316   -0.06484   -0.11702   -0.16621 
+
+Number of factors:  2 
+
+Standardized loadings: (* = significant at 1% level)
+
+                               f1      f2       unique.var   communalities
+mdib_ben_ext_server_2b      0.459* -0.342*           0.639           0.361
+mdib_ben_ext_server_2c          .       .            0.933           0.067
+mdib_ben_ext_reminder_3a    0.428* -0.302*           0.698           0.302
+mdib_ben_ext_reminder_3b    0.595*                   0.650           0.350
+mdib_ben_ext_neighbor_5b    0.549*                   0.700           0.300
+mdib_ben_ext_neighbor_5c    0.490*      .            0.737           0.263
+mdib_ben_ext_exercise_7b    0.425*  0.438*           0.667           0.333
+mdib_ben_ext_exercise_7c    0.588*  0.437*           0.517           0.483
+mdib_ben_ext_walk_9a        0.415*      .*           0.744           0.256
+mdib_ben_ext_walk_9b        0.558*      .            0.665           0.335
+mdib_ben_ext_job_10b            .                    0.967           0.033
+mdib_ben_ext_job_10c        0.588*      .            0.571           0.429
+mdib_ben_ext_stumble_11a    0.383*      .            0.819           0.181
+mdib_ben_ext_stumble_11b                             0.983           0.017
+mdib_ben_int_remember_1a                .            0.972           0.028
+mdib_ben_int_remember_1c    0.366*      .            0.824           0.176
+mdib_ben_int_cleaning_4a    0.507*                   0.744           0.256
+mdib_ben_int_cleaning_4b    0.522*      .*           0.621           0.379
+mdib_ben_int_email_6a       0.484*      .            0.765           0.235
+mdib_ben_int_email_6c           .                    0.957           0.043
+mdib_ben_int_medication_8a  0.558*                   0.680           0.320
+mdib_ben_int_medication_8c  0.481*                   0.770           0.230
+mdib_ben_int_cough_12a      0.454*      .            0.743           0.257
+mdib_ben_int_cough_12c          .   0.614*           0.585           0.415
+mdib_neg_ext_server_2a              0.774*           0.388           0.612
+mdib_neg_ext_reminder_3c        .   0.564*           0.658           0.342
+mdib_neg_ext_neighbor_5a            0.658*           0.564           0.436
+mdib_neg_ext_exercise_7a    0.351*  0.484*           0.678           0.322
+mdib_neg_ext_walk_9c                0.889*           0.218           0.782
+mdib_neg_ext_job_10a            .*  0.775*           0.365           0.635
+mdib_neg_ext_stumble_11c        .   0.694*           0.521           0.479
+mdib_neg_int_remember_1b   -0.302*      .*           0.808           0.192
+mdib_neg_int_cleaning_4c        .   0.722*           0.422           0.578
+mdib_neg_int_email_6b               0.742*           0.452           0.548
+mdib_neg_int_medication_8b          0.717*           0.481           0.519
+mdib_neg_int_cough_12b              0.710*           0.493           0.507
+
+                              f2    f1  total
+Sum of sq (obliq) loadings 7.039 4.964 12.003
+Proportion of total        0.586 0.414  1.000
+Proportion var             0.196 0.138  0.333
+Cumulative var             0.196 0.333  0.333
+
+Factor correlations: (* = significant at 1% level)
+
+       f1      f2 
+f1  1.000         
+f2 -0.105   1.000 
+
+Number of factors:  3 
+
+Standardized loadings: (* = significant at 1% level)
+
+                               f1      f2      f3       unique.var   communalities
+mdib_ben_ext_server_2b      0.432*         -0.342            0.629           0.371
+mdib_ben_ext_server_2c          .   0.351*      .            0.850           0.150
+mdib_ben_ext_reminder_3a    0.343*      .  -0.349*           0.650           0.350
+mdib_ben_ext_reminder_3b    0.545*  0.423*                   0.558           0.442
+mdib_ben_ext_neighbor_5b    0.500*  0.348*                   0.643           0.357
+mdib_ben_ext_neighbor_5c    0.570*      .       .            0.634           0.366
+mdib_ben_ext_exercise_7b    0.512*          0.461            0.606           0.394
+mdib_ben_ext_exercise_7c    0.677*          0.457            0.455           0.545
+mdib_ben_ext_walk_9a        0.369*              .            0.742           0.258
+mdib_ben_ext_walk_9b        0.564*              .            0.645           0.355
+mdib_ben_ext_job_10b            .   0.428*                   0.810           0.190
+mdib_ben_ext_job_10c        0.565*              .            0.569           0.431
+mdib_ben_ext_stumble_11a    0.308*  0.334*      .            0.738           0.262
+mdib_ben_ext_stumble_11b            0.452*      .            0.761           0.239
+mdib_ben_int_remember_1a            0.426*      .            0.809           0.191
+mdib_ben_int_remember_1c    0.388*      .       .            0.755           0.245
+mdib_ben_int_cleaning_4a    0.469*  0.330*                   0.703           0.297
+mdib_ben_int_cleaning_4b    0.492*              .            0.618           0.382
+mdib_ben_int_email_6a       0.511*              .            0.751           0.249
+mdib_ben_int_email_6c           .       .                    0.952           0.048
+mdib_ben_int_medication_8a  0.530*      .                    0.678           0.322
+mdib_ben_int_medication_8c  0.492*                           0.767           0.233
+mdib_ben_int_cough_12a      0.458*              .            0.720           0.280
+mdib_ben_int_cough_12c                  .   0.669*           0.509           0.491
+mdib_neg_ext_server_2a              0.323*  0.754*           0.336           0.664
+mdib_neg_ext_reminder_3c                .   0.629*           0.583           0.417
+mdib_neg_ext_neighbor_5a                    0.673*           0.560           0.440
+mdib_neg_ext_exercise_7a    0.398*      .   0.477*           0.678           0.322
+mdib_neg_ext_walk_9c            .           0.932*           0.166           0.834
+mdib_neg_ext_job_10a        0.403*          0.804*           0.326           0.674
+mdib_neg_ext_stumble_11c        .           0.713*           0.506           0.494
+mdib_neg_int_remember_1b        .*          0.305*           0.806           0.194
+mdib_neg_int_cleaning_4c        .       .   0.700*           0.397           0.603
+mdib_neg_int_email_6b               0.402*  0.701*           0.376           0.624
+mdib_neg_int_medication_8b          0.406*  0.662*           0.406           0.594
+mdib_neg_int_cough_12b              0.396*  0.653*           0.426           0.574
+
+                              f3    f1    f2  total
+Sum of sq (obliq) loadings 7.036 4.775 2.070 13.881
+Proportion of total        0.507 0.344 0.149  1.000
+Proportion var             0.195 0.133 0.057  0.386
+Cumulative var             0.195 0.328 0.386  0.386
+
+Factor correlations: (* = significant at 1% level)
+
+       f1      f2      f3 
+f1  1.000                 
+f2 -0.073   1.000         
+f3 -0.204  -0.026   1.000 
+
+Number of factors:  4 
+
+Standardized loadings: (* = significant at 1% level)
+
+                               f1      f2      f3      f4       unique.var   communalities
+mdib_ben_ext_server_2b              0.408*      .  -0.395*           0.629           0.371
+mdib_ben_ext_server_2c      0.486*      .  -0.333                    0.663           0.337
+mdib_ben_ext_reminder_3a        .*      .       .  -0.333*           0.650           0.350
+mdib_ben_ext_reminder_3b    0.505*  0.518*                           0.490           0.510
+mdib_ben_ext_neighbor_5b    0.353*  0.431*      .                    0.641           0.359
+mdib_ben_ext_neighbor_5c        .   0.581*              .            0.632           0.368
+mdib_ben_ext_exercise_7b            0.530*          0.337*           0.603           0.397
+mdib_ben_ext_exercise_7c            0.695*          0.303*           0.434           0.566
+mdib_ben_ext_walk_9a                    .   0.497*      .            0.628           0.372
+mdib_ben_ext_walk_9b            .   0.431*  0.674*                   0.394           0.606
+mdib_ben_ext_job_10b        0.326           0.325       .            0.760           0.240
+mdib_ben_ext_job_10c                0.469*  0.430*      .            0.520           0.480
+mdib_ben_ext_stumble_11a    0.392*      .*              .*           0.712           0.288
+mdib_ben_ext_stumble_11b    0.355*      .   0.319                    0.700           0.300
+mdib_ben_int_remember_1a    0.380*                      .            0.811           0.189
+mdib_ben_int_remember_1c            0.430*      .       .*           0.713           0.287
+mdib_ben_int_cleaning_4a    0.353*  0.426*                           0.692           0.308
+mdib_ben_int_cleaning_4b            0.482*         -0.371*           0.597           0.403
+mdib_ben_int_email_6a               0.522*                           0.723           0.277
+mdib_ben_int_email_6c           .       .                            0.951           0.049
+mdib_ben_int_medication_8a          0.416*  0.489*                   0.584           0.416
+mdib_ben_int_medication_8c          0.422*  0.321*                   0.740           0.260
+mdib_ben_int_cough_12a              0.480*              .*           0.677           0.323
+mdib_ben_int_cough_12c          .                   0.669*           0.472           0.528
+mdib_neg_ext_server_2a      0.332*              .   0.707*           0.278           0.722
+mdib_neg_ext_reminder_3c        .               .   0.673*           0.505           0.495
+mdib_neg_ext_neighbor_5a                            0.655*           0.561           0.439
+mdib_neg_ext_exercise_7a            0.339*  0.313   0.515*           0.617           0.383
+mdib_neg_ext_walk_9c                    .       .   0.797*           0.105           0.895
+mdib_neg_ext_job_10a                0.427*          0.698*           0.323           0.677
+mdib_neg_ext_stumble_11c                .           0.648*           0.508           0.492
+mdib_neg_int_remember_1b        .       .*          0.368*           0.778           0.222
+mdib_neg_int_cleaning_4c        .       .           0.751*           0.394           0.606
+mdib_neg_int_email_6b           .               .   0.785*           0.344           0.656
+mdib_neg_int_medication_8b  0.313                   0.730*           0.401           0.599
+mdib_neg_int_cough_12b      0.324                   0.698*           0.429           0.571
+
+                              f4    f2    f1    f3  total
+Sum of sq (obliq) loadings 6.981 4.354 2.006 2.002 15.342
+Proportion of total        0.455 0.284 0.131 0.130  1.000
+Proportion var             0.194 0.121 0.056 0.056  0.426
+Cumulative var             0.194 0.315 0.371 0.426  0.426
+
+Factor correlations: (* = significant at 1% level)
+
+       f1      f2      f3      f4 
+f1  1.000                         
+f2 -0.042   1.000                 
+f3  0.180  -0.045   1.000         
+f4 -0.059  -0.026  -0.247   1.000 
+

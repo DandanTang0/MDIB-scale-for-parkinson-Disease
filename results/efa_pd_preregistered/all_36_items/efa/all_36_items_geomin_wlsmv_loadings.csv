@@ -1,0 +1,117 @@
+$nf2
+                               f1     f2
+mdib_ben_ext_server_2b      0.459 -0.342
+mdib_ben_ext_server_2c      0.226  0.153
+mdib_ben_ext_reminder_3a    0.428 -0.302
+mdib_ben_ext_reminder_3b    0.595  0.068
+mdib_ben_ext_neighbor_5b    0.549  0.006
+mdib_ben_ext_neighbor_5c    0.490  0.211
+mdib_ben_ext_exercise_7b    0.425  0.438
+mdib_ben_ext_exercise_7c    0.588  0.437
+mdib_ben_ext_walk_9a        0.415 -0.249
+mdib_ben_ext_walk_9b        0.558 -0.105
+mdib_ben_ext_job_10b        0.182  0.043
+mdib_ben_ext_job_10c        0.588 -0.233
+mdib_ben_ext_stumble_11a    0.383 -0.150
+mdib_ben_ext_stumble_11b    0.077 -0.097
+mdib_ben_int_remember_1a    0.054  0.164
+mdib_ben_int_remember_1c    0.366 -0.171
+mdib_ben_int_cleaning_4a    0.507  0.100
+mdib_ben_int_cleaning_4b    0.522 -0.277
+mdib_ben_int_email_6a       0.484  0.114
+mdib_ben_int_email_6c       0.203 -0.030
+mdib_ben_int_medication_8a  0.558 -0.050
+mdib_ben_int_medication_8c  0.481  0.070
+mdib_ben_int_cough_12a      0.454 -0.184
+mdib_ben_int_cough_12c     -0.143  0.614
+mdib_neg_ext_server_2a     -0.060  0.774
+mdib_neg_ext_reminder_3c   -0.106  0.564
+mdib_neg_ext_neighbor_5a   -0.025  0.658
+mdib_neg_ext_exercise_7a    0.351  0.484
+mdib_neg_ext_walk_9c        0.065  0.889
+mdib_neg_ext_job_10a        0.284  0.775
+mdib_neg_ext_stumble_11c    0.117  0.694
+mdib_neg_int_remember_1b   -0.302  0.287
+mdib_neg_int_cleaning_4c   -0.172  0.722
+mdib_neg_int_email_6b       0.021  0.742
+mdib_neg_int_medication_8b -0.025  0.717
+mdib_neg_int_cough_12b     -0.014  0.710
+
+$nf3
+                               f1     f2     f3
+mdib_ben_ext_server_2b      0.432 -0.062 -0.342
+mdib_ben_ext_server_2c      0.184  0.351  0.115
+mdib_ben_ext_reminder_3a    0.343  0.264 -0.349
+mdib_ben_ext_reminder_3b    0.545  0.423  0.004
+mdib_ben_ext_neighbor_5b    0.500  0.348 -0.042
+mdib_ben_ext_neighbor_5c    0.570 -0.153  0.247
+mdib_ben_ext_exercise_7b    0.512 -0.086  0.461
+mdib_ben_ext_exercise_7c    0.677 -0.029  0.457
+mdib_ben_ext_walk_9a        0.369  0.098 -0.273
+mdib_ben_ext_walk_9b        0.564 -0.010 -0.105
+mdib_ben_ext_job_10b        0.112  0.428 -0.010
+mdib_ben_ext_job_10c        0.565  0.012 -0.239
+mdib_ben_ext_stumble_11a    0.308  0.334 -0.204
+mdib_ben_ext_stumble_11b   -0.026  0.452 -0.174
+mdib_ben_int_remember_1a   -0.010  0.426  0.105
+mdib_ben_int_remember_1c    0.388 -0.191 -0.155
+mdib_ben_int_cleaning_4a    0.469  0.330  0.058
+mdib_ben_int_cleaning_4b    0.492  0.014 -0.288
+mdib_ben_int_email_6a       0.511  0.025  0.114
+mdib_ben_int_email_6c       0.180  0.111 -0.047
+mdib_ben_int_medication_8a  0.530  0.177 -0.077
+mdib_ben_int_medication_8c  0.492  0.060  0.063
+mdib_ben_int_cough_12a      0.458 -0.050 -0.179
+mdib_ben_int_cough_12c     -0.020 -0.179  0.669
+mdib_neg_ext_server_2a     -0.011  0.323  0.754
+mdib_neg_ext_reminder_3c    0.016 -0.142  0.629
+mdib_neg_ext_neighbor_5a    0.061  0.048  0.673
+mdib_neg_ext_exercise_7a    0.398  0.166  0.477
+mdib_neg_ext_walk_9c        0.218 -0.010  0.932
+mdib_neg_ext_job_10a        0.403  0.027  0.804
+mdib_neg_ext_stumble_11c    0.219 -0.009  0.713
+mdib_neg_int_remember_1b   -0.260 -0.044  0.305
+mdib_neg_int_cleaning_4c   -0.123  0.259  0.700
+mdib_neg_int_email_6b       0.046  0.402  0.701
+mdib_neg_int_medication_8b -0.015  0.406  0.662
+mdib_neg_int_cough_12b     -0.012  0.396  0.653
+
+$nf4
+                               f1     f2     f3     f4
+mdib_ben_ext_server_2b     -0.007  0.408  0.139 -0.395
+mdib_ben_ext_server_2c      0.486  0.217 -0.333  0.028
+mdib_ben_ext_reminder_3a    0.287  0.284  0.165 -0.333
+mdib_ben_ext_reminder_3b    0.505  0.518 -0.001 -0.060
+mdib_ben_ext_neighbor_5b    0.353  0.431  0.191 -0.041
+mdib_ben_ext_neighbor_5c   -0.126  0.581  0.064  0.125
+mdib_ben_ext_exercise_7b   -0.070  0.530 -0.003  0.337
+mdib_ben_ext_exercise_7c    0.018  0.695 -0.019  0.303
+mdib_ben_ext_walk_9a        0.005  0.237  0.497 -0.179
+mdib_ben_ext_walk_9b       -0.173  0.431  0.674  0.006
+mdib_ben_ext_job_10b        0.326  0.005  0.325  0.123
+mdib_ben_ext_job_10c       -0.048  0.469  0.430 -0.217
+mdib_ben_ext_stumble_11a    0.392  0.278 -0.012 -0.232
+mdib_ben_ext_stumble_11b    0.355 -0.146  0.319 -0.010
+mdib_ben_int_remember_1a    0.380 -0.064  0.084  0.187
+mdib_ben_int_remember_1c   -0.091  0.430 -0.101 -0.291
+mdib_ben_int_cleaning_4a    0.353  0.426  0.093  0.027
+mdib_ben_int_cleaning_4b    0.091  0.482  0.062 -0.371
+mdib_ben_int_email_6a       0.082  0.522 -0.018  0.004
+mdib_ben_int_email_6c       0.125  0.163  0.039 -0.059
+mdib_ben_int_medication_8a  0.095  0.416  0.489  0.003
+mdib_ben_int_medication_8c -0.010  0.422  0.321  0.069
+mdib_ben_int_cough_12a      0.035  0.480 -0.034 -0.294
+mdib_ben_int_cough_12c     -0.286 -0.001  0.065  0.669
+mdib_neg_ext_server_2a      0.332  0.023 -0.277  0.707
+mdib_neg_ext_reminder_3c   -0.258  0.012  0.196  0.673
+mdib_neg_ext_neighbor_5a   -0.004  0.071 -0.021  0.655
+mdib_neg_ext_exercise_7a    0.048  0.339  0.313  0.515
+mdib_neg_ext_walk_9c       -0.023  0.290 -0.267  0.797
+mdib_neg_ext_job_10a        0.011  0.427 -0.056  0.698
+mdib_neg_ext_stumble_11c   -0.044  0.242 -0.040  0.648
+mdib_neg_int_remember_1b   -0.116 -0.267  0.040  0.368
+mdib_neg_int_cleaning_4c    0.168 -0.136 -0.010  0.751
+mdib_neg_int_email_6b       0.294 -0.009  0.150  0.785
+mdib_neg_int_medication_8b  0.313 -0.059  0.061  0.730
+mdib_neg_int_cough_12b      0.324 -0.039 -0.007  0.698
+

@@ -1,0 +1,861 @@
+This is lavaan 0.6-19 -- running exploratory factor analysis
+
+  Estimator                                       DWLS
+  Rotation method                      OBLIMIN OBLIQUE
+  Oblimin gamma                                      0
+  Rotation algorithm (rstarts)                GPA (30)
+  Standardized metric                             TRUE
+  Row weights                                     None
+
+  Number of observations                            82
+
+Overview models:
+                 chisq  df pvalue   cfi rmsea
+  nfactors = 2 687.040 559  0.000 0.863 0.053
+  nfactors = 3 627.895 525  0.001 0.890 0.049
+  nfactors = 4 581.629 492  0.003 0.904 0.047
+
+Eigenvalues correlation matrix:
+
+       ev1        ev2        ev3        ev4        ev5        ev6        ev7        ev8 
+   7.53206    5.30873    2.44500    1.94529    1.81565    1.64037    1.61461    1.37688 
+       ev9       ev10       ev11       ev12       ev13       ev14       ev15       ev16 
+   1.31485    1.20515    1.11509    0.95795    0.87794    0.79850    0.72487    0.68658 
+      ev17       ev18       ev19       ev20       ev21       ev22       ev23       ev24 
+   0.62776    0.61056    0.54162    0.49269    0.44834    0.41781    0.37646    0.32566 
+      ev25       ev26       ev27       ev28       ev29       ev30       ev31       ev32 
+   0.30337    0.22271    0.19518    0.11329    0.10986    0.10595    0.08768    0.01278 
+      ev33       ev34       ev35       ev36 
+  -0.00316   -0.06484   -0.11702   -0.16621 
+
+Number of factors:  2 
+
+Standardized loadings: (* = significant at 1% level)
+
+                               f1      f2       unique.var   communalities
+mdib_ben_ext_server_2b      0.478* -0.330*           0.639           0.361
+mdib_ben_ext_server_2c          .       .            0.933           0.067
+mdib_ben_ext_reminder_3a    0.445*      .*           0.698           0.302
+mdib_ben_ext_reminder_3b    0.592*                   0.650           0.350
+mdib_ben_ext_neighbor_5b    0.549*                   0.700           0.300
+mdib_ben_ext_neighbor_5c    0.480*      .*           0.737           0.263
+mdib_ben_ext_exercise_7b    0.402*  0.445*           0.667           0.333
+mdib_ben_ext_exercise_7c    0.566*  0.448*           0.517           0.483
+mdib_ben_ext_walk_9a        0.429*      .*           0.744           0.256
+mdib_ben_ext_walk_9b        0.565*                   0.665           0.335
+mdib_ben_ext_job_10b            .                    0.967           0.033
+mdib_ben_ext_job_10c        0.601*      .            0.571           0.429
+mdib_ben_ext_stumble_11a    0.391*      .            0.819           0.181
+mdib_ben_ext_stumble_11b                             0.983           0.017
+mdib_ben_int_remember_1a                .            0.972           0.028
+mdib_ben_int_remember_1c    0.375*      .            0.824           0.176
+mdib_ben_int_cleaning_4a    0.502*      .            0.744           0.256
+mdib_ben_int_cleaning_4b    0.537*      .*           0.621           0.379
+mdib_ben_int_email_6a       0.478*      .            0.765           0.235
+mdib_ben_int_email_6c           .                    0.957           0.043
+mdib_ben_int_medication_8a  0.562*                   0.680           0.320
+mdib_ben_int_medication_8c  0.478*                   0.770           0.230
+mdib_ben_int_cough_12a      0.464*      .            0.743           0.257
+mdib_ben_int_cough_12c          .   0.607*           0.585           0.415
+mdib_neg_ext_server_2a          .   0.769*           0.388           0.612
+mdib_neg_ext_reminder_3c        .   0.558*           0.658           0.342
+mdib_neg_ext_neighbor_5a            0.654*           0.564           0.436
+mdib_neg_ext_exercise_7a    0.326*  0.490*           0.678           0.322
+mdib_neg_ext_walk_9c                0.885*           0.218           0.782
+mdib_neg_ext_job_10a            .*  0.777*           0.365           0.635
+mdib_neg_ext_stumble_11c            0.693*           0.521           0.479
+mdib_neg_int_remember_1b   -0.318*      .*           0.808           0.192
+mdib_neg_int_cleaning_4c        .*  0.715*           0.422           0.578
+mdib_neg_int_email_6b               0.739*           0.452           0.548
+mdib_neg_int_medication_8b          0.713*           0.481           0.519
+mdib_neg_int_cough_12b              0.706*           0.493           0.507
+
+                              f2    f1  total
+Sum of sq (obliq) loadings 6.979 5.024 12.003
+Proportion of total        0.581 0.419  1.000
+Proportion var             0.194 0.140  0.333
+Cumulative var             0.194 0.333  0.333
+
+Factor correlations: (* = significant at 1% level)
+
+       f1      f2 
+f1  1.000         
+f2 -0.075   1.000 
+
+Standard errors standardized loadings:
+
+                              f1    f2
+mdib_ben_ext_server_2b     0.088 0.087
+mdib_ben_ext_server_2c     0.105 0.082
+mdib_ben_ext_reminder_3a   0.109 0.081
+mdib_ben_ext_reminder_3b   0.069 0.072
+mdib_ben_ext_neighbor_5b   0.088 0.069
+mdib_ben_ext_neighbor_5c   0.095 0.083
+mdib_ben_ext_exercise_7b   0.093 0.093
+mdib_ben_ext_exercise_7c   0.085 0.079
+mdib_ben_ext_walk_9a       0.091 0.084
+mdib_ben_ext_walk_9b       0.067 0.100
+mdib_ben_ext_job_10b       0.104 0.100
+mdib_ben_ext_job_10c       0.081 0.095
+mdib_ben_ext_stumble_11a   0.095 0.077
+mdib_ben_ext_stumble_11b   0.107 0.091
+mdib_ben_int_remember_1a   0.096 0.095
+mdib_ben_int_remember_1c   0.097 0.104
+mdib_ben_int_cleaning_4a   0.093 0.070
+mdib_ben_int_cleaning_4b   0.081 0.090
+mdib_ben_int_email_6a      0.091 0.090
+mdib_ben_int_email_6c      0.099 0.098
+mdib_ben_int_medication_8a 0.066 0.078
+mdib_ben_int_medication_8c 0.085 0.104
+mdib_ben_int_cough_12a     0.096 0.098
+mdib_ben_int_cough_12c     0.092 0.079
+mdib_neg_ext_server_2a     0.081 0.058
+mdib_neg_ext_reminder_3c   0.099 0.071
+mdib_neg_ext_neighbor_5a   0.074 0.063
+mdib_neg_ext_exercise_7a   0.096 0.082
+mdib_neg_ext_walk_9c       0.084 0.051
+mdib_neg_ext_job_10a       0.082 0.062
+mdib_neg_ext_stumble_11c   0.085 0.057
+mdib_neg_int_remember_1b   0.085 0.098
+mdib_neg_int_cleaning_4c   0.079 0.061
+mdib_neg_int_email_6b      0.084 0.054
+mdib_neg_int_medication_8b 0.086 0.063
+mdib_neg_int_cough_12b     0.101 0.072
+
+Z-statistics standardized loadings:
+
+                               f1     f2
+mdib_ben_ext_server_2b      5.453 -3.787
+mdib_ben_ext_server_2c      2.076  1.919
+mdib_ben_ext_reminder_3a    4.086 -3.593
+mdib_ben_ext_reminder_3b    8.575  1.115
+mdib_ben_ext_neighbor_5b    6.252  0.266
+mdib_ben_ext_neighbor_5c    5.027  2.653
+mdib_ben_ext_exercise_7b    4.329  4.799
+mdib_ben_ext_exercise_7c    6.698  5.663
+mdib_ben_ext_walk_9a        4.721 -2.852
+mdib_ben_ext_walk_9b        8.434 -0.917
+mdib_ben_ext_job_10b        1.729  0.469
+mdib_ben_ext_job_10c        7.452 -2.306
+mdib_ben_ext_stumble_11a    4.121 -1.810
+mdib_ben_ext_stumble_11b    0.769 -1.043
+mdib_ben_int_remember_1a    0.471  1.728
+mdib_ben_int_remember_1c    3.880 -1.558
+mdib_ben_int_cleaning_4a    5.399  1.584
+mdib_ben_int_cleaning_4b    6.667 -2.935
+mdib_ben_int_email_6a       5.251  1.381
+mdib_ben_int_email_6c       2.077 -0.256
+mdib_ben_int_medication_8a  8.572 -0.478
+mdib_ben_int_medication_8c  5.658  0.774
+mdib_ben_int_cough_12a      4.837 -1.763
+mdib_ben_int_cough_12c     -1.914  7.729
+mdib_neg_ext_server_2a     -1.245 13.325
+mdib_neg_ext_reminder_3c   -1.372  7.870
+mdib_neg_ext_neighbor_5a   -0.803 10.344
+mdib_neg_ext_exercise_7a    3.401  5.988
+mdib_neg_ext_walk_9c        0.216 17.255
+mdib_neg_ext_job_10a        2.958 12.581
+mdib_neg_ext_stumble_11c    0.948 12.212
+mdib_neg_int_remember_1b   -3.735  2.857
+mdib_neg_int_cleaning_4c   -2.669 11.794
+mdib_neg_int_email_6b      -0.221 13.729
+mdib_neg_int_medication_8b -0.733 11.395
+mdib_neg_int_cough_12b     -0.513  9.850
+
+P-values standardized loadings:
+
+                              f1    f2
+mdib_ben_ext_server_2b     0.000 0.000
+mdib_ben_ext_server_2c     0.038 0.055
+mdib_ben_ext_reminder_3a   0.000 0.000
+mdib_ben_ext_reminder_3b   0.000 0.265
+mdib_ben_ext_neighbor_5b   0.000 0.790
+mdib_ben_ext_neighbor_5c   0.000 0.008
+mdib_ben_ext_exercise_7b   0.000 0.000
+mdib_ben_ext_exercise_7c   0.000 0.000
+mdib_ben_ext_walk_9a       0.000 0.004
+mdib_ben_ext_walk_9b       0.000 0.359
+mdib_ben_ext_job_10b       0.084 0.639
+mdib_ben_ext_job_10c       0.000 0.021
+mdib_ben_ext_stumble_11a   0.000 0.070
+mdib_ben_ext_stumble_11b   0.442 0.297
+mdib_ben_int_remember_1a   0.638 0.084
+mdib_ben_int_remember_1c   0.000 0.119
+mdib_ben_int_cleaning_4a   0.000 0.113
+mdib_ben_int_cleaning_4b   0.000 0.003
+mdib_ben_int_email_6a      0.000 0.167
+mdib_ben_int_email_6c      0.038 0.798
+mdib_ben_int_medication_8a 0.000 0.632
+mdib_ben_int_medication_8c 0.000 0.439
+mdib_ben_int_cough_12a     0.000 0.078
+mdib_ben_int_cough_12c     0.056 0.000
+mdib_neg_ext_server_2a     0.213 0.000
+mdib_neg_ext_reminder_3c   0.170 0.000
+mdib_neg_ext_neighbor_5a   0.422 0.000
+mdib_neg_ext_exercise_7a   0.001 0.000
+mdib_neg_ext_walk_9c       0.829 0.000
+mdib_neg_ext_job_10a       0.003 0.000
+mdib_neg_ext_stumble_11c   0.343 0.000
+mdib_neg_int_remember_1b   0.000 0.004
+mdib_neg_int_cleaning_4c   0.008 0.000
+mdib_neg_int_email_6b      0.825 0.000
+mdib_neg_int_medication_8b 0.463 0.000
+mdib_neg_int_cough_12b     0.608 0.000
+
+Standard errors unique variances:
+
+    mdib_ben_ext_server_2b     mdib_ben_ext_server_2c   mdib_ben_ext_reminder_3a 
+                     0.077                      0.053                      0.103 
+  mdib_ben_ext_reminder_3b   mdib_ben_ext_neighbor_5b   mdib_ben_ext_neighbor_5c 
+                     0.081                      0.096                      0.090 
+  mdib_ben_ext_exercise_7b   mdib_ben_ext_exercise_7c       mdib_ben_ext_walk_9a 
+                     0.095                      0.095                      0.082 
+      mdib_ben_ext_walk_9b       mdib_ben_ext_job_10b       mdib_ben_ext_job_10c 
+                     0.075                      0.038                      0.089 
+  mdib_ben_ext_stumble_11a   mdib_ben_ext_stumble_11b   mdib_ben_int_remember_1a 
+                     0.078                      0.028                      0.032 
+  mdib_ben_int_remember_1c   mdib_ben_int_cleaning_4a   mdib_ben_int_cleaning_4b 
+                     0.084                      0.092                      0.091 
+     mdib_ben_int_email_6a      mdib_ben_int_email_6c mdib_ben_int_medication_8a 
+                     0.086                      0.040                      0.072 
+mdib_ben_int_medication_8c     mdib_ben_int_cough_12a     mdib_ben_int_cough_12c 
+                     0.081                      0.082                      0.089 
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     0.088                      0.078                      0.082 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     0.090                      0.092                      0.089 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_remember_1b   mdib_neg_int_cleaning_4c 
+                     0.080                      0.080                      0.076 
+     mdib_neg_int_email_6b mdib_neg_int_medication_8b     mdib_neg_int_cough_12b 
+                     0.080                      0.086                      0.097 
+
+Z-statistics unique variances:
+
+    mdib_ben_ext_server_2b     mdib_ben_ext_server_2c   mdib_ben_ext_reminder_3a 
+                     8.255                     17.711                      6.775 
+  mdib_ben_ext_reminder_3b   mdib_ben_ext_neighbor_5b   mdib_ben_ext_neighbor_5c 
+                     7.975                      7.295                      8.207 
+  mdib_ben_ext_exercise_7b   mdib_ben_ext_exercise_7c       mdib_ben_ext_walk_9a 
+                     7.036                      5.465                      9.101 
+      mdib_ben_ext_walk_9b       mdib_ben_ext_job_10b       mdib_ben_ext_job_10c 
+                     8.842                     25.754                      6.413 
+  mdib_ben_ext_stumble_11a   mdib_ben_ext_stumble_11b   mdib_ben_int_remember_1a 
+                    10.542                     35.288                     30.372 
+  mdib_ben_int_remember_1c   mdib_ben_int_cleaning_4a   mdib_ben_int_cleaning_4b 
+                     9.815                      8.098                      6.795 
+     mdib_ben_int_email_6a      mdib_ben_int_email_6c mdib_ben_int_medication_8a 
+                     8.885                     23.835                      9.491 
+mdib_ben_int_medication_8c     mdib_ben_int_cough_12a     mdib_ben_int_cough_12c 
+                     9.519                      9.047                      6.555 
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     4.408                      8.430                      6.884 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     7.522                      2.376                      4.119 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_remember_1b   mdib_neg_int_cleaning_4c 
+                     6.515                     10.155                      5.541 
+     mdib_neg_int_email_6b mdib_neg_int_medication_8b     mdib_neg_int_cough_12b 
+                     5.657                      5.605                      5.096 
+
+P-values unique variances:
+
+    mdib_ben_ext_server_2b     mdib_ben_ext_server_2c   mdib_ben_ext_reminder_3a 
+                     0.000                      0.000                      0.000 
+  mdib_ben_ext_reminder_3b   mdib_ben_ext_neighbor_5b   mdib_ben_ext_neighbor_5c 
+                     0.000                      0.000                      0.000 
+  mdib_ben_ext_exercise_7b   mdib_ben_ext_exercise_7c       mdib_ben_ext_walk_9a 
+                     0.000                      0.000                      0.000 
+      mdib_ben_ext_walk_9b       mdib_ben_ext_job_10b       mdib_ben_ext_job_10c 
+                     0.000                      0.000                      0.000 
+  mdib_ben_ext_stumble_11a   mdib_ben_ext_stumble_11b   mdib_ben_int_remember_1a 
+                     0.000                      0.000                      0.000 
+  mdib_ben_int_remember_1c   mdib_ben_int_cleaning_4a   mdib_ben_int_cleaning_4b 
+                     0.000                      0.000                      0.000 
+     mdib_ben_int_email_6a      mdib_ben_int_email_6c mdib_ben_int_medication_8a 
+                     0.000                      0.000                      0.000 
+mdib_ben_int_medication_8c     mdib_ben_int_cough_12a     mdib_ben_int_cough_12c 
+                     0.000                      0.000                      0.000 
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     0.000                      0.000                      0.000 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     0.000                      0.018                      0.000 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_remember_1b   mdib_neg_int_cleaning_4c 
+                     0.000                      0.000                      0.000 
+     mdib_neg_int_email_6b mdib_neg_int_medication_8b     mdib_neg_int_cough_12b 
+                     0.000                      0.000                      0.000 
+
+Standard errors factor correlations:
+
+      f1    f2
+f1 0.000      
+f2 0.093 0.000
+
+Z-statistics factor correlations:
+
+       f1     f2
+f1      .       
+f2 -0.807      .
+
+P-values factor correlations:
+
+       f1     f2
+f1      .       
+f2   0.42      .
+
+Number of factors:  3 
+
+Standardized loadings: (* = significant at 1% level)
+
+                               f1      f2      f3       unique.var   communalities
+mdib_ben_ext_server_2b      0.358       .  -0.420*           0.629           0.371
+mdib_ben_ext_server_2c      0.341           0.309            0.850           0.150
+mdib_ben_ext_reminder_3a    0.540*      .       .            0.650           0.350
+mdib_ben_ext_reminder_3b    0.671*              .            0.558           0.442
+mdib_ben_ext_neighbor_5b    0.602*                           0.643           0.357
+mdib_ben_ext_neighbor_5c        .   0.574*      .            0.634           0.366
+mdib_ben_ext_exercise_7b        .   0.584*                   0.606           0.394
+mdib_ben_ext_exercise_7c        .   0.647*                   0.455           0.545
+mdib_ben_ext_walk_9a        0.410               .            0.742           0.258
+mdib_ben_ext_walk_9b        0.403   0.318       .            0.645           0.355
+mdib_ben_ext_job_10b        0.392       .   0.313            0.810           0.190
+mdib_ben_ext_job_10c        0.465       .  -0.332            0.569           0.431
+mdib_ben_ext_stumble_11a    0.519*      .                    0.738           0.262
+mdib_ben_ext_stumble_11b    0.374  -0.406       .            0.761           0.239
+mdib_ben_int_remember_1a        .       .   0.427            0.809           0.191
+mdib_ben_int_remember_1c        .   0.311  -0.388            0.755           0.245
+mdib_ben_int_cleaning_4a    0.534*              .            0.703           0.297
+mdib_ben_int_cleaning_4b    0.434       .  -0.340            0.618           0.382
+mdib_ben_int_email_6a       0.319   0.355                    0.751           0.249
+mdib_ben_int_email_6c           .                            0.952           0.048
+mdib_ben_int_medication_8a  0.509       .                    0.678           0.322
+mdib_ben_int_medication_8c  0.350       .                    0.767           0.233
+mdib_ben_int_cough_12a      0.328       .  -0.309            0.720           0.280
+mdib_ben_int_cough_12c     -0.371   0.404   0.304            0.509           0.491
+mdib_neg_ext_server_2a                      0.775            0.336           0.664
+mdib_neg_ext_reminder_3c   -0.306   0.383       .            0.583           0.417
+mdib_neg_ext_neighbor_5a        .       .   0.469            0.560           0.440
+mdib_neg_ext_exercise_7a        .   0.344   0.327            0.678           0.322
+mdib_neg_ext_walk_9c            .   0.551   0.544            0.166           0.834
+mdib_neg_ext_job_10a                0.587   0.429            0.326           0.674
+mdib_neg_ext_stumble_11c        .   0.457   0.397            0.506           0.494
+mdib_neg_int_remember_1b   -0.308               .            0.806           0.194
+mdib_neg_int_cleaning_4c        .           0.722            0.397           0.603
+mdib_neg_int_email_6b                       0.787            0.376           0.624
+mdib_neg_int_medication_8b                  0.784*           0.406           0.594
+mdib_neg_int_cough_12b                      0.769*           0.426           0.574
+
+                              f3    f1    f2  total
+Sum of sq (obliq) loadings 5.793 4.449 3.639 13.881
+Proportion of total        0.417 0.321 0.262  1.000
+Proportion var             0.161 0.124 0.101  0.386
+Cumulative var             0.161 0.285 0.386  0.386
+
+Factor correlations: (* = significant at 1% level)
+
+       f1      f2      f3 
+f1  1.000                 
+f2  0.089   1.000         
+f3 -0.232   0.293   1.000 
+
+Standard errors standardized loadings:
+
+                              f1    f2    f3
+mdib_ben_ext_server_2b     0.389 0.735 0.151
+mdib_ben_ext_server_2c     0.144 0.127 0.201
+mdib_ben_ext_reminder_3a   0.128 0.777 0.540
+mdib_ben_ext_reminder_3b   0.140 0.516 0.230
+mdib_ben_ext_neighbor_5b   0.163 0.467 0.202
+mdib_ben_ext_neighbor_5c   0.596 0.158 0.670
+mdib_ben_ext_exercise_7b   0.503 0.165 0.800
+mdib_ben_ext_exercise_7c   0.577 0.114 0.801
+mdib_ben_ext_walk_9a       0.217 0.561 0.234
+mdib_ben_ext_walk_9b       0.461 0.571 0.200
+mdib_ben_ext_job_10b       0.269 0.195 0.413
+mdib_ben_ext_job_10c       0.462 0.723 0.130
+mdib_ben_ext_stumble_11a   0.080 0.511 0.442
+mdib_ben_ext_stumble_11b   0.385 0.278 0.686
+mdib_ben_int_remember_1a   0.297 0.139 0.391
+mdib_ben_int_remember_1c   0.452 0.387 0.258
+mdib_ben_int_cleaning_4a   0.160 0.402 0.156
+mdib_ben_int_cleaning_4b   0.391 0.738 0.153
+mdib_ben_int_email_6a      0.421 0.317 0.337
+mdib_ben_int_email_6c      0.124 0.276 0.165
+mdib_ben_int_medication_8a 0.311 0.558 0.118
+mdib_ben_int_medication_8c 0.374 0.361 0.247
+mdib_ben_int_cough_12a     0.418 0.575 0.129
+mdib_ben_int_cough_12c     0.179 0.815 0.902
+mdib_neg_ext_server_2a     0.241 0.835 0.449
+mdib_neg_ext_reminder_3c   0.155 0.717 0.830
+mdib_neg_ext_neighbor_5a   0.091 0.694 0.658
+mdib_neg_ext_exercise_7a   0.231 0.289 0.519
+mdib_neg_ext_walk_9c       0.250 0.778 1.000
+mdib_neg_ext_job_10a       0.359 0.591 0.980
+mdib_neg_ext_stumble_11c   0.242 0.601 0.824
+mdib_neg_int_remember_1b   0.204 0.593 0.289
+mdib_neg_int_cleaning_4c   0.298 0.900 0.428
+mdib_neg_int_email_6b      0.280 0.749 0.351
+mdib_neg_int_medication_8b 0.324 0.735 0.274
+mdib_neg_int_cough_12b     0.308 0.728 0.272
+
+Z-statistics standardized loadings:
+
+                               f1     f2     f3
+mdib_ben_ext_server_2b      0.920  0.227 -2.774
+mdib_ben_ext_server_2c      2.369 -0.614  1.535
+mdib_ben_ext_reminder_3a    4.215 -0.153 -0.231
+mdib_ben_ext_reminder_3b    4.783  0.102  0.769
+mdib_ben_ext_neighbor_5b    3.684  0.120  0.487
+mdib_ben_ext_neighbor_5c    0.306  3.644 -0.218
+mdib_ben_ext_exercise_7b    0.240  3.549  0.088
+mdib_ben_ext_exercise_7c    0.476  5.674  0.078
+mdib_ben_ext_walk_9a        1.889  0.082 -0.941
+mdib_ben_ext_walk_9b        0.874  0.556 -1.307
+mdib_ben_ext_job_10b        1.458 -1.186  0.758
+mdib_ben_ext_job_10c        1.005  0.338 -2.560
+mdib_ben_ext_stumble_11a    6.488 -0.248  0.095
+mdib_ben_ext_stumble_11b    0.970 -1.462  0.391
+mdib_ben_int_remember_1a    0.912 -1.841  1.090
+mdib_ben_int_remember_1c    0.375  0.802 -1.502
+mdib_ben_int_cleaning_4a    3.333  0.229  1.027
+mdib_ben_int_cleaning_4b    1.111  0.238 -2.222
+mdib_ben_int_email_6a       0.759  1.119 -0.203
+mdib_ben_int_email_6c       1.755  0.058  0.015
+mdib_ben_int_medication_8a  1.637  0.319 -0.645
+mdib_ben_int_medication_8c  0.935  0.821 -0.274
+mdib_ben_int_cough_12a      0.784  0.427 -2.399
+mdib_ben_int_cough_12c     -2.073  0.495  0.337
+mdib_neg_ext_server_2a     -0.101  0.117  1.727
+mdib_neg_ext_reminder_3c   -1.971  0.534  0.358
+mdib_neg_ext_neighbor_5a   -1.665  0.431  0.714
+mdib_neg_ext_exercise_7a    0.973  1.190  0.631
+mdib_neg_ext_walk_9c       -0.710  0.709  0.544
+mdib_neg_ext_job_10a        0.045  0.993  0.438
+mdib_neg_ext_stumble_11c   -0.421  0.759  0.482
+mdib_neg_int_remember_1b   -1.511  0.000  0.867
+mdib_neg_int_cleaning_4c   -0.431  0.053  1.690
+mdib_neg_int_email_6b       0.317  0.074  2.243
+mdib_neg_int_medication_8b  0.199 -0.004  2.862
+mdib_neg_int_cough_12b      0.204  0.003  2.825
+
+P-values standardized loadings:
+
+                              f1    f2    f3
+mdib_ben_ext_server_2b     0.358 0.821 0.006
+mdib_ben_ext_server_2c     0.018 0.539 0.125
+mdib_ben_ext_reminder_3a   0.000 0.879 0.817
+mdib_ben_ext_reminder_3b   0.000 0.919 0.442
+mdib_ben_ext_neighbor_5b   0.000 0.905 0.626
+mdib_ben_ext_neighbor_5c   0.759 0.000 0.827
+mdib_ben_ext_exercise_7b   0.810 0.000 0.930
+mdib_ben_ext_exercise_7c   0.634 0.000 0.938
+mdib_ben_ext_walk_9a       0.059 0.935 0.347
+mdib_ben_ext_walk_9b       0.382 0.578 0.191
+mdib_ben_ext_job_10b       0.145 0.236 0.448
+mdib_ben_ext_job_10c       0.315 0.735 0.010
+mdib_ben_ext_stumble_11a   0.000 0.804 0.924
+mdib_ben_ext_stumble_11b   0.332 0.144 0.696
+mdib_ben_int_remember_1a   0.362 0.066 0.276
+mdib_ben_int_remember_1c   0.708 0.422 0.133
+mdib_ben_int_cleaning_4a   0.001 0.819 0.304
+mdib_ben_int_cleaning_4b   0.267 0.812 0.026
+mdib_ben_int_email_6a      0.448 0.263 0.839
+mdib_ben_int_email_6c      0.079 0.954 0.988
+mdib_ben_int_medication_8a 0.102 0.749 0.519
+mdib_ben_int_medication_8c 0.350 0.412 0.784
+mdib_ben_int_cough_12a     0.433 0.669 0.016
+mdib_ben_int_cough_12c     0.038 0.620 0.736
+mdib_neg_ext_server_2a     0.920 0.907 0.084
+mdib_neg_ext_reminder_3c   0.049 0.593 0.721
+mdib_neg_ext_neighbor_5a   0.096 0.666 0.475
+mdib_neg_ext_exercise_7a   0.330 0.234 0.528
+mdib_neg_ext_walk_9c       0.478 0.478 0.587
+mdib_neg_ext_job_10a       0.964 0.321 0.662
+mdib_neg_ext_stumble_11c   0.673 0.448 0.629
+mdib_neg_int_remember_1b   0.131 1.000 0.386
+mdib_neg_int_cleaning_4c   0.667 0.958 0.091
+mdib_neg_int_email_6b      0.751 0.941 0.025
+mdib_neg_int_medication_8b 0.843 0.997 0.004
+mdib_neg_int_cough_12b     0.838 0.998 0.005
+
+Standard errors unique variances:
+
+    mdib_ben_ext_server_2b     mdib_ben_ext_server_2c   mdib_ben_ext_reminder_3a 
+                     0.079                      0.086                      0.103 
+  mdib_ben_ext_reminder_3b   mdib_ben_ext_neighbor_5b   mdib_ben_ext_neighbor_5c 
+                     0.086                      0.099                      0.088 
+  mdib_ben_ext_exercise_7b   mdib_ben_ext_exercise_7c       mdib_ben_ext_walk_9a 
+                     0.093                      0.089                      0.081 
+      mdib_ben_ext_walk_9b       mdib_ben_ext_job_10b       mdib_ben_ext_job_10c 
+                     0.087                      0.098                      0.089 
+  mdib_ben_ext_stumble_11a   mdib_ben_ext_stumble_11b   mdib_ben_int_remember_1a 
+                     0.078                      0.117                      0.107 
+  mdib_ben_int_remember_1c   mdib_ben_int_cleaning_4a   mdib_ben_int_cleaning_4b 
+                     0.113                      0.086                      0.093 
+     mdib_ben_int_email_6a      mdib_ben_int_email_6c mdib_ben_int_medication_8a 
+                     0.092                      0.040                      0.072 
+mdib_ben_int_medication_8c     mdib_ben_int_cough_12a     mdib_ben_int_cough_12c 
+                     0.084                      0.089                      0.087 
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     0.084                      0.088                      0.080 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     0.089                      0.125                      0.086 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_remember_1b   mdib_neg_int_cleaning_4c 
+                     0.083                      0.081                      0.074 
+     mdib_neg_int_email_6b mdib_neg_int_medication_8b     mdib_neg_int_cough_12b 
+                     0.078                      0.088                      0.102 
+
+Z-statistics unique variances:
+
+    mdib_ben_ext_server_2b     mdib_ben_ext_server_2c   mdib_ben_ext_reminder_3a 
+                     8.001                      9.878                      6.310 
+  mdib_ben_ext_reminder_3b   mdib_ben_ext_neighbor_5b   mdib_ben_ext_neighbor_5c 
+                     6.510                      6.496                      7.184 
+  mdib_ben_ext_exercise_7b   mdib_ben_ext_exercise_7c       mdib_ben_ext_walk_9a 
+                     6.508                      5.082                      9.179 
+      mdib_ben_ext_walk_9b       mdib_ben_ext_job_10b       mdib_ben_ext_job_10c 
+                     7.390                      8.276                      6.403 
+  mdib_ben_ext_stumble_11a   mdib_ben_ext_stumble_11b   mdib_ben_int_remember_1a 
+                     9.476                      6.509                      7.593 
+  mdib_ben_int_remember_1c   mdib_ben_int_cleaning_4a   mdib_ben_int_cleaning_4b 
+                     6.708                      8.157                      6.654 
+     mdib_ben_int_email_6a      mdib_ben_int_email_6c mdib_ben_int_medication_8a 
+                     8.189                     23.610                      9.419 
+mdib_ben_int_medication_8c     mdib_ben_int_cough_12a     mdib_ben_int_cough_12c 
+                     9.131                      8.088                      5.823 
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     3.986                      6.599                      6.960 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     7.602                      1.323                      3.774 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_remember_1b   mdib_neg_int_cleaning_4c 
+                     6.117                      9.933                      5.349 
+     mdib_neg_int_email_6b mdib_neg_int_medication_8b     mdib_neg_int_cough_12b 
+                     4.802                      4.631                      4.162 
+
+P-values unique variances:
+
+    mdib_ben_ext_server_2b     mdib_ben_ext_server_2c   mdib_ben_ext_reminder_3a 
+                     0.000                      0.000                      0.000 
+  mdib_ben_ext_reminder_3b   mdib_ben_ext_neighbor_5b   mdib_ben_ext_neighbor_5c 
+                     0.000                      0.000                      0.000 
+  mdib_ben_ext_exercise_7b   mdib_ben_ext_exercise_7c       mdib_ben_ext_walk_9a 
+                     0.000                      0.000                      0.000 
+      mdib_ben_ext_walk_9b       mdib_ben_ext_job_10b       mdib_ben_ext_job_10c 
+                     0.000                      0.000                      0.000 
+  mdib_ben_ext_stumble_11a   mdib_ben_ext_stumble_11b   mdib_ben_int_remember_1a 
+                     0.000                      0.000                      0.000 
+  mdib_ben_int_remember_1c   mdib_ben_int_cleaning_4a   mdib_ben_int_cleaning_4b 
+                     0.000                      0.000                      0.000 
+     mdib_ben_int_email_6a      mdib_ben_int_email_6c mdib_ben_int_medication_8a 
+                     0.000                      0.000                      0.000 
+mdib_ben_int_medication_8c     mdib_ben_int_cough_12a     mdib_ben_int_cough_12c 
+                     0.000                      0.000                      0.000 
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     0.000                      0.000                      0.000 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     0.000                      0.186                      0.000 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_remember_1b   mdib_neg_int_cleaning_4c 
+                     0.000                      0.000                      0.000 
+     mdib_neg_int_email_6b mdib_neg_int_medication_8b     mdib_neg_int_cough_12b 
+                     0.000                      0.000                      0.000 
+
+Standard errors factor correlations:
+
+      f1    f2    f3
+f1 0.000            
+f2 0.366 0.000      
+f3 0.104 0.678 0.000
+
+Z-statistics factor correlations:
+
+       f1     f2     f3
+f1      .              
+f2  0.243      .       
+f3 -2.237  0.432      .
+
+P-values factor correlations:
+
+       f1     f2     f3
+f1      .              
+f2  0.808      .       
+f3  0.025  0.665      .
+
+Number of factors:  4 
+
+Standardized loadings: (* = significant at 1% level)
+
+                               f1      f2      f3      f4       unique.var   communalities
+mdib_ben_ext_server_2b          .       .          -0.362*           0.629           0.371
+mdib_ben_ext_server_2c      0.556* -0.307*      .       .            0.663           0.337
+mdib_ben_ext_reminder_3a    0.428*      .       .                    0.650           0.350
+mdib_ben_ext_reminder_3b    0.664*      .       .       .            0.490           0.510
+mdib_ben_ext_neighbor_5b    0.458*      .               .            0.641           0.359
+mdib_ben_ext_neighbor_5c                .   0.549*      .            0.632           0.368
+mdib_ben_ext_exercise_7b                .   0.607*                   0.603           0.397
+mdib_ben_ext_exercise_7c        .       .   0.687*                   0.434           0.566
+mdib_ben_ext_walk_9a                0.558*      .                    0.628           0.372
+mdib_ben_ext_walk_9b                0.793*                           0.394           0.606
+mdib_ben_ext_job_10b            .       .       .   0.422*           0.760           0.240
+mdib_ben_ext_job_10c            .   0.568*              .            0.520           0.480
+mdib_ben_ext_stumble_11a    0.518*                                   0.712           0.288
+mdib_ben_ext_stumble_11b        .       .  -0.482*  0.405*           0.700           0.300
+mdib_ben_int_remember_1a        .               .   0.440*           0.811           0.189
+mdib_ben_int_remember_1c        .           0.323  -0.445*           0.713           0.287
+mdib_ben_int_cleaning_4a    0.455*      .       .       .            0.692           0.308
+mdib_ben_int_cleaning_4b    0.377*      .       .  -0.333*           0.597           0.403
+mdib_ben_int_email_6a           .*      .   0.388*      .            0.723           0.277
+mdib_ben_int_email_6c           .                                    0.951           0.049
+mdib_ben_int_medication_8a      .   0.585*                           0.584           0.416
+mdib_ben_int_medication_8c          0.430*      .                    0.740           0.260
+mdib_ben_int_cough_12a      0.323*      .       .  -0.354*           0.677           0.323
+mdib_ben_int_cough_12c     -0.446*          0.396       .            0.472           0.528
+mdib_neg_ext_server_2a          .  -0.331*  0.302   0.591*           0.278           0.722
+mdib_neg_ext_reminder_3c   -0.442*      .   0.321   0.334            0.505           0.495
+mdib_neg_ext_neighbor_5a        .           0.350   0.399            0.561           0.439
+mdib_neg_ext_exercise_7a            0.369*      .   0.366*           0.617           0.383
+mdib_neg_ext_walk_9c                    .   0.733*  0.313            0.105           0.895
+mdib_neg_ext_job_10a                        0.665*      .            0.323           0.677
+mdib_neg_ext_stumble_11c        .           0.515*      .            0.508           0.492
+mdib_neg_int_remember_1b   -0.324                       .            0.778           0.222
+mdib_neg_int_cleaning_4c        .       .       .   0.659*           0.394           0.606
+mdib_neg_int_email_6b                               0.781*           0.344           0.656
+mdib_neg_int_medication_8b                          0.743*           0.401           0.599
+mdib_neg_int_cough_12b                          .   0.699*           0.429           0.571
+
+                              f4    f3    f1    f2  total
+Sum of sq (obliq) loadings 4.913 4.093 3.222 3.115 15.342
+Proportion of total        0.320 0.267 0.210 0.203  1.000
+Proportion var             0.136 0.114 0.090 0.087  0.426
+Cumulative var             0.136 0.250 0.340 0.426  0.426
+
+Factor correlations: (* = significant at 1% level)
+
+       f1      f2      f3      f4 
+f1  1.000                         
+f2  0.321*  1.000                 
+f3 -0.002   0.021   1.000         
+f4 -0.156  -0.201   0.371*  1.000 
+
+Standard errors standardized loadings:
+
+                              f1    f2    f3    f4
+mdib_ben_ext_server_2b     0.129 0.140 0.134 0.109
+mdib_ben_ext_server_2c     0.094 0.106 0.111 0.141
+mdib_ben_ext_reminder_3a   0.109 0.107 0.144 0.125
+mdib_ben_ext_reminder_3b   0.079 0.096 0.099 0.096
+mdib_ben_ext_neighbor_5b   0.104 0.126 0.117 0.099
+mdib_ben_ext_neighbor_5c   0.123 0.094 0.087 0.110
+mdib_ben_ext_exercise_7b   0.104 0.103 0.082 0.140
+mdib_ben_ext_exercise_7c   0.131 0.099 0.078 0.136
+mdib_ben_ext_walk_9a       0.092 0.096 0.145 0.128
+mdib_ben_ext_walk_9b       0.068 0.066 0.089 0.120
+mdib_ben_ext_job_10b       0.149 0.136 0.114 0.125
+mdib_ben_ext_job_10c       0.103 0.088 0.120 0.101
+mdib_ben_ext_stumble_11a   0.076 0.113 0.136 0.106
+mdib_ben_ext_stumble_11b   0.148 0.147 0.118 0.145
+mdib_ben_int_remember_1a   0.100 0.117 0.164 0.133
+mdib_ben_int_remember_1c   0.109 0.121 0.197 0.124
+mdib_ben_int_cleaning_4a   0.095 0.100 0.114 0.117
+mdib_ben_int_cleaning_4b   0.127 0.120 0.147 0.125
+mdib_ben_int_email_6a      0.113 0.111 0.115 0.130
+mdib_ben_int_email_6c      0.120 0.107 0.108 0.115
+mdib_ben_int_medication_8a 0.095 0.086 0.104 0.099
+mdib_ben_int_medication_8c 0.113 0.106 0.117 0.120
+mdib_ben_int_cough_12a     0.112 0.100 0.144 0.110
+mdib_ben_int_cough_12c     0.108 0.097 0.163 0.148
+mdib_neg_ext_server_2a     0.109 0.124 0.148 0.165
+mdib_neg_ext_reminder_3c   0.116 0.128 0.190 0.147
+mdib_neg_ext_neighbor_5a   0.098 0.099 0.178 0.178
+mdib_neg_ext_exercise_7a   0.119 0.114 0.123 0.126
+mdib_neg_ext_walk_9c       0.080 0.091 0.265 0.283
+mdib_neg_ext_job_10a       0.103 0.080 0.137 0.179
+mdib_neg_ext_stumble_11c   0.089 0.106 0.174 0.182
+mdib_neg_int_remember_1b   0.129 0.133 0.162 0.136
+mdib_neg_int_cleaning_4c   0.106 0.099 0.158 0.115
+mdib_neg_int_email_6b      0.083 0.091 0.127 0.086
+mdib_neg_int_medication_8b 0.080 0.090 0.157 0.100
+mdib_neg_int_cough_12b     0.101 0.112 0.156 0.120
+
+Z-statistics standardized loadings:
+
+                               f1     f2     f3     f4
+mdib_ben_ext_server_2b      1.979  1.974  0.630 -3.331
+mdib_ben_ext_server_2c      5.886 -2.904  1.075  1.117
+mdib_ben_ext_reminder_3a    3.921  2.180 -1.077 -0.519
+mdib_ben_ext_reminder_3b    8.361  1.088  1.306  1.292
+mdib_ben_ext_neighbor_5b    4.419  2.213  0.338  1.324
+mdib_ben_ext_neighbor_5c    0.753  2.518  6.311 -1.717
+mdib_ben_ext_exercise_7b    0.667  1.367  7.376 -0.106
+mdib_ben_ext_exercise_7c    1.739  1.697  8.776 -0.300
+mdib_ben_ext_walk_9a        0.715  5.834 -1.146 -0.173
+mdib_ben_ext_walk_9b       -1.273 12.041  0.706 -0.236
+mdib_ben_ext_job_10b        1.235  2.030 -2.560  3.385
+mdib_ben_ext_job_10c        1.386  6.466  0.578 -1.897
+mdib_ben_ext_stumble_11a    6.809  0.392 -0.538  0.132
+mdib_ben_ext_stumble_11b    1.234  1.569 -4.100  2.798
+mdib_ben_int_remember_1a    2.262  0.130 -1.305  3.304
+mdib_ben_int_remember_1c    1.905  0.436  1.638 -3.599
+mdib_ben_int_cleaning_4a    4.798  1.776  1.036  1.221
+mdib_ben_int_cleaning_4b    2.975  1.769  0.991 -2.666
+mdib_ben_int_email_6a       2.603  1.150  3.365 -1.028
+mdib_ben_int_email_6c       1.539  0.711  0.177  0.024
+mdib_ben_int_medication_8a  1.764  6.804  0.135  0.947
+mdib_ben_int_medication_8c  0.814  4.067  1.663  0.024
+mdib_ben_int_cough_12a      2.875  1.203  1.808 -3.218
+mdib_ben_int_cough_12c     -4.121  0.558  2.431  1.823
+mdib_neg_ext_server_2a      1.266 -2.658  2.042  3.588
+mdib_neg_ext_reminder_3c   -3.808  1.425  1.696  2.278
+mdib_neg_ext_neighbor_5a   -1.592 -0.350  1.973  2.235
+mdib_neg_ext_exercise_7a   -0.160  3.222  2.388  2.896
+mdib_neg_ext_walk_9c       -0.952 -2.334  2.766  1.109
+mdib_neg_ext_job_10a        0.010  0.396  4.868  1.663
+mdib_neg_ext_stumble_11c   -1.261  0.011  2.956  1.645
+mdib_neg_int_remember_1b   -2.508 -0.361 -0.115  2.016
+mdib_neg_int_cleaning_4c   -1.220 -1.070  0.827  5.753
+mdib_neg_int_email_6b      -0.086  0.780  0.728  9.100
+mdib_neg_int_medication_8b  0.245 -0.313  0.440  7.409
+mdib_neg_int_cough_12b      0.587 -0.779  0.660  5.804
+
+P-values standardized loadings:
+
+                              f1    f2    f3    f4
+mdib_ben_ext_server_2b     0.048 0.048 0.528 0.001
+mdib_ben_ext_server_2c     0.000 0.004 0.282 0.264
+mdib_ben_ext_reminder_3a   0.000 0.029 0.281 0.604
+mdib_ben_ext_reminder_3b   0.000 0.277 0.192 0.196
+mdib_ben_ext_neighbor_5b   0.000 0.027 0.735 0.186
+mdib_ben_ext_neighbor_5c   0.451 0.012 0.000 0.086
+mdib_ben_ext_exercise_7b   0.504 0.172 0.000 0.915
+mdib_ben_ext_exercise_7c   0.082 0.090 0.000 0.764
+mdib_ben_ext_walk_9a       0.475 0.000 0.252 0.862
+mdib_ben_ext_walk_9b       0.203 0.000 0.480 0.813
+mdib_ben_ext_job_10b       0.217 0.042 0.010 0.001
+mdib_ben_ext_job_10c       0.166 0.000 0.563 0.058
+mdib_ben_ext_stumble_11a   0.000 0.695 0.591 0.895
+mdib_ben_ext_stumble_11b   0.217 0.117 0.000 0.005
+mdib_ben_int_remember_1a   0.024 0.897 0.192 0.001
+mdib_ben_int_remember_1c   0.057 0.663 0.101 0.000
+mdib_ben_int_cleaning_4a   0.000 0.076 0.300 0.222
+mdib_ben_int_cleaning_4b   0.003 0.077 0.322 0.008
+mdib_ben_int_email_6a      0.009 0.250 0.001 0.304
+mdib_ben_int_email_6c      0.124 0.477 0.860 0.981
+mdib_ben_int_medication_8a 0.078 0.000 0.892 0.344
+mdib_ben_int_medication_8c 0.415 0.000 0.096 0.981
+mdib_ben_int_cough_12a     0.004 0.229 0.071 0.001
+mdib_ben_int_cough_12c     0.000 0.577 0.015 0.068
+mdib_neg_ext_server_2a     0.206 0.008 0.041 0.000
+mdib_neg_ext_reminder_3c   0.000 0.154 0.090 0.023
+mdib_neg_ext_neighbor_5a   0.111 0.726 0.048 0.025
+mdib_neg_ext_exercise_7a   0.873 0.001 0.017 0.004
+mdib_neg_ext_walk_9c       0.341 0.020 0.006 0.267
+mdib_neg_ext_job_10a       0.992 0.692 0.000 0.096
+mdib_neg_ext_stumble_11c   0.207 0.991 0.003 0.100
+mdib_neg_int_remember_1b   0.012 0.718 0.909 0.044
+mdib_neg_int_cleaning_4c   0.222 0.285 0.408 0.000
+mdib_neg_int_email_6b      0.932 0.436 0.466 0.000
+mdib_neg_int_medication_8b 0.806 0.754 0.660 0.000
+mdib_neg_int_cough_12b     0.557 0.436 0.510 0.000
+
+Standard errors unique variances:
+
+    mdib_ben_ext_server_2b     mdib_ben_ext_server_2c   mdib_ben_ext_reminder_3a 
+                     0.079                      0.107                      0.104 
+  mdib_ben_ext_reminder_3b   mdib_ben_ext_neighbor_5b   mdib_ben_ext_neighbor_5c 
+                     0.083                      0.098                      0.090 
+  mdib_ben_ext_exercise_7b   mdib_ben_ext_exercise_7c       mdib_ben_ext_walk_9a 
+                     0.094                      0.089                      0.097 
+      mdib_ben_ext_walk_9b       mdib_ben_ext_job_10b       mdib_ben_ext_job_10c 
+                     0.097                      0.103                      0.090 
+  mdib_ben_ext_stumble_11a   mdib_ben_ext_stumble_11b   mdib_ben_int_remember_1a 
+                     0.076                      0.119                      0.106 
+  mdib_ben_int_remember_1c   mdib_ben_int_cleaning_4a   mdib_ben_int_cleaning_4b 
+                     0.125                      0.085                      0.100 
+     mdib_ben_int_email_6a      mdib_ben_int_email_6c mdib_ben_int_medication_8a 
+                     0.092                      0.043                      0.082 
+mdib_ben_int_medication_8c     mdib_ben_int_cough_12a     mdib_ben_int_cough_12c 
+                     0.093                      0.091                      0.093 
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     0.086                      0.105                      0.080 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     0.092                      0.136                      0.088 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_remember_1b   mdib_neg_int_cleaning_4c 
+                     0.082                      0.095                      0.074 
+     mdib_neg_int_email_6b mdib_neg_int_medication_8b     mdib_neg_int_cough_12b 
+                     0.079                      0.085                      0.103 
+
+Z-statistics unique variances:
+
+    mdib_ben_ext_server_2b     mdib_ben_ext_server_2c   mdib_ben_ext_reminder_3a 
+                     8.003                      6.186                      6.264 
+  mdib_ben_ext_reminder_3b   mdib_ben_ext_neighbor_5b   mdib_ben_ext_neighbor_5c 
+                     5.903                      6.531                      7.018 
+  mdib_ben_ext_exercise_7b   mdib_ben_ext_exercise_7c       mdib_ben_ext_walk_9a 
+                     6.439                      4.858                      6.492 
+      mdib_ben_ext_walk_9b       mdib_ben_ext_job_10b       mdib_ben_ext_job_10c 
+                     4.071                      7.351                      5.749 
+  mdib_ben_ext_stumble_11a   mdib_ben_ext_stumble_11b   mdib_ben_int_remember_1a 
+                     9.366                      5.876                      7.634 
+  mdib_ben_int_remember_1c   mdib_ben_int_cleaning_4a   mdib_ben_int_cleaning_4b 
+                     5.694                      8.120                      5.956 
+     mdib_ben_int_email_6a      mdib_ben_int_email_6c mdib_ben_int_medication_8a 
+                     7.886                     21.888                      7.077 
+mdib_ben_int_medication_8c     mdib_ben_int_cough_12a     mdib_ben_int_cough_12c 
+                     7.988                      7.480                      5.050 
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     3.219                      4.788                      6.989 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     6.695                      0.770                      3.658 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_remember_1b   mdib_neg_int_cleaning_4c 
+                     6.173                      8.229                      5.322 
+     mdib_neg_int_email_6b mdib_neg_int_medication_8b     mdib_neg_int_cough_12b 
+                     4.348                      4.736                      4.161 
+
+P-values unique variances:
+
+    mdib_ben_ext_server_2b     mdib_ben_ext_server_2c   mdib_ben_ext_reminder_3a 
+                     0.000                      0.000                      0.000 
+  mdib_ben_ext_reminder_3b   mdib_ben_ext_neighbor_5b   mdib_ben_ext_neighbor_5c 
+                     0.000                      0.000                      0.000 
+  mdib_ben_ext_exercise_7b   mdib_ben_ext_exercise_7c       mdib_ben_ext_walk_9a 
+                     0.000                      0.000                      0.000 
+      mdib_ben_ext_walk_9b       mdib_ben_ext_job_10b       mdib_ben_ext_job_10c 
+                     0.000                      0.000                      0.000 
+  mdib_ben_ext_stumble_11a   mdib_ben_ext_stumble_11b   mdib_ben_int_remember_1a 
+                     0.000                      0.000                      0.000 
+  mdib_ben_int_remember_1c   mdib_ben_int_cleaning_4a   mdib_ben_int_cleaning_4b 
+                     0.000                      0.000                      0.000 
+     mdib_ben_int_email_6a      mdib_ben_int_email_6c mdib_ben_int_medication_8a 
+                     0.000                      0.000                      0.000 
+mdib_ben_int_medication_8c     mdib_ben_int_cough_12a     mdib_ben_int_cough_12c 
+                     0.000                      0.000                      0.000 
+    mdib_neg_ext_server_2a   mdib_neg_ext_reminder_3c   mdib_neg_ext_neighbor_5a 
+                     0.001                      0.000                      0.000 
+  mdib_neg_ext_exercise_7a       mdib_neg_ext_walk_9c       mdib_neg_ext_job_10a 
+                     0.000                      0.441                      0.000 
+  mdib_neg_ext_stumble_11c   mdib_neg_int_remember_1b   mdib_neg_int_cleaning_4c 
+                     0.000                      0.000                      0.000 
+     mdib_neg_int_email_6b mdib_neg_int_medication_8b     mdib_neg_int_cough_12b 
+                     0.000                      0.000                      0.000 
+
+Standard errors factor correlations:
+
+      f1    f2    f3    f4
+f1 0.000                  
+f2 0.082 0.000            
+f3 0.084 0.120 0.000      
+f4 0.110 0.090 0.086 0.000
+
+Z-statistics factor correlations:
+
+       f1     f2     f3     f4
+f1      .                     
+f2  3.903      .              
+f3 -0.018  0.172      .       
+f4 -1.414 -2.242  4.328      .
+
+P-values factor correlations:
+
+       f1     f2     f3     f4
+f1      .                     
+f2  0.000      .              
+f3  0.985  0.864      .       
+f4  0.157  0.025  0.000      .
+
