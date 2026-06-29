@@ -15,15 +15,15 @@
 
 wd_dir <- getwd()
 
-source("./1a_define_functions.R")
+source("./code/1a_define_functions.R")
 
 groundhog_day <- version_control()
 
 pkgs <- c("flextable", "officer", "ftExtra")
 groundhog.library(pkgs, groundhog_day)
 
-source("./1b_set_flextable_defaults.R")
-source("./1c_set_officer_properties.R")
+source("./code/1b_set_flextable_defaults.R")
+source("./code/1c_set_officer_properties.R")
 
 # ---------------------------------------------------------------------------- #
 # Import cleaned PD analysis data ----

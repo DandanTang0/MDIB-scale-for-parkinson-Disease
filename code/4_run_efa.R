@@ -67,7 +67,7 @@
 
 wd_dir <- getwd()
 
-source("./1a_define_functions.R")
+source("./code/1a_define_functions.R")
 
 groundhog_day <- version_control()
 

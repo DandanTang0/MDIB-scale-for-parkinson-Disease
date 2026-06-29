@@ -10,7 +10,7 @@ wd_dir <- getwd()
 # Load custom helper functions used across the analysis scripts, including
 # version_control().
 
-source("./1a_define_functions.R")
+source("./code/1a_define_functions.R")
 
 # Check the R version used for the reproducibility snapshot, load groundhog, and
 # store the package-version date used when loading analysis packages.
@@ -23,7 +23,7 @@ groundhog_day <- version_control()
 
 # Import the de-identified PD Aim 1 REDCap data.
 
-mdib_pd_dat <- read.csv("final PD Aim 1 data_deid_2022-12-08_OSF.csv")
+mdib_pd_dat <- read.csv("./data/bot_cleaned/final PD Aim 1 data_deid_2022-12-08_OSF.csv")
 
 # ---------------------------------------------------------------------------- #
 # Define REDCap event names ----
