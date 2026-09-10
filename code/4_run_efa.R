@@ -687,8 +687,44 @@ save(
 # theorized as an external item, and mdib_neg_int_email_6b showed a mild
 # cross-loading in the geomin solution, although its primary loading was on the
 # internal factor and the oblimin/promax solutions were cleaner.
+
 # ---------------------------------------------------------------------------- #
-# Step 7: Strategically chosen item-removal sequences for negative items ----
+# Step 7: original sequence
+# ---------------------------------------------------------------------------- #
+# The original sequence starts with the two most consistently problematic items:
+# - mdib_neg_ext_server_2a: external item that repeatedly loaded with internal items.
+# - mdib_neg_int_remember_1b: nonsalient loading and very low communality.
+
+#
+# Step 2 of this sequence gives the balanced 10-item candidate:
+# remove mdib_neg_ext_server_2a, and mdib_neg_int_remember_1b retain
+# mdib_neg_int_email_6b.
+#
+# Step 3 gives the stricter 9-item candidate:
+# also remove mdib_neg_int_email_6b.
+
+removal_sequences <- list(
+  focused = c(
+    "mdib_neg_ext_server_2a",
+    "mdib_neg_int_remember_1b",
+    "mdib_neg_int_email_6b"
+  )
+)
+
+removal_path <- file.path(efa_path, "orginal_EFA")
+
+for (sequence_name in names(removal_sequences)) {
+  run_removal_sequence(
+    df = mdib_bl_neg_12,
+    sequence_name = sequence_name,
+    removal_order = removal_sequences[[sequence_name]],
+    base_path = removal_path
+  )
+}
+
+
+# ---------------------------------------------------------------------------- #
+# Step 8: Sensitivity analysis about choosing item-removal sequences for negative items ----
 # ---------------------------------------------------------------------------- #
 
 # These sequences are not exhaustive. They are chosen to reflect decision rules
@@ -751,19 +787,13 @@ for (sequence_name in names(removal_sequences)) {
 # balanced 10-item solution that retains mdib_neg_int_email_6b.
 
 # ---------------------------------------------------------------------------- #
-# Step 8: Focused sequence for comparing the 10-item and 9-item candidates ----
+# Step 9: Sensitivity analysis for additional sequence 
 # ---------------------------------------------------------------------------- #
 
-# This focused sequence starts with the two most consistently problematic items:
-# - mdib_neg_int_remember_1b: nonsalient loading and very low communality.
-# - mdib_neg_ext_server_2a: external item that repeatedly loaded with internal items.
-#
-# Step 2 of this sequence gives the balanced 10-item candidate:
-# remove mdib_neg_int_remember_1b and mdib_neg_ext_server_2a, retain
-# mdib_neg_int_email_6b.
-#
-# Step 3 gives the stricter 9-item candidate:
-# also remove mdib_neg_int_email_6b.
+# Sequence D: Start with the item that did not load saliently on either factor,
+# then remove the external item with a theory-inconsistent loading and the internal 
+#item with a mild cross-loading.
+
 
 removal_sequences <- list(
   focused = c(
@@ -773,7 +803,7 @@ removal_sequences <- list(
   )
 )
 
-removal_path <- file.path(efa_path, "rm_focus")
+removal_path <- file.path(efa_path, "rm_Seq_D")
 
 for (sequence_name in names(removal_sequences)) {
   run_removal_sequence(
